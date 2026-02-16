@@ -2,25 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 
-// pasar referencias directas a comunicación por eventos
-// feedback visual pa to
-
 public class CombatController : MonoBehaviour
 {
-    // 🔥 EVENTOS
-    public static event System.Action<int, int> OnManaChanged;        
-    public static event System.Action<bool> OnTurnChanged;            
-    public static event System.Action<HealthComponent> OnLifeChanged; 
-
     [Header("Stats")]
     public HealthComponent jugadorHealth;
     public HealthComponent enemigoHealth;
     public Enemy enemigo;
     public int JugadorMana = 5;
     public int EnemyMana = 5;
-
+    private int maxMana;
     [Header("Tipo elemental del jugador")]
     public ElementType tipoJugador = ElementType.Fuego;
+    public DeathScreenUI deathScreen;
 
     [Header("Defensa")]
     public bool defensaActiva = false;
@@ -45,13 +38,14 @@ public class CombatController : MonoBehaviour
 
     private void Start()
     {
+        maxMana = JugadorMana;
         StartCoroutine(EsperarPlayer());
 
         // Notificar mana inicial
-        OnManaChanged?.Invoke(JugadorMana, JugadorMana);
+        GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
 
-        // Notificar turno inicial (jugador)
-        OnTurnChanged?.Invoke(true);
+        // Notificar turno inicial
+        GameEvents.OnTurnChanged.Invoke(true);
     }
 
     private IEnumerator EsperarPlayer()
@@ -67,14 +61,14 @@ public class CombatController : MonoBehaviour
         jugadorHealth = playerObj.GetComponent<HealthComponent>();
         jugadorHealth.OnDeath += JugadorMuerto;
 
-        // Escuchar cambios de vida del jugador
+        // Escuchar vida del jugador
         jugadorHealth.OnHealthChanged += (vidaActual, vidaMax) =>
         {
-            OnLifeChanged?.Invoke(jugadorHealth);
+            GameEvents.OnLifeChanged.Invoke(jugadorHealth);
         };
 
         // Notificar vida inicial
-        OnLifeChanged?.Invoke(jugadorHealth);
+        GameEvents.OnLifeChanged.Invoke(jugadorHealth);
 
         MostrarMano();
         esperandoSeleccion = true;
@@ -109,23 +103,23 @@ public class CombatController : MonoBehaviour
         enemigoHealth = enemigoGO.GetComponent<HealthComponent>();
         enemigoHealth.OnDeath += EnemigoMuerto;
 
-        // Escuchar cambios de vida del enemigo
+        // Escuchar vida del enemigo
         enemigoHealth.OnHealthChanged += (vidaActual, vidaMax) =>
         {
-            OnLifeChanged?.Invoke(enemigoHealth);
+            GameEvents.OnLifeChanged.Invoke(enemigoHealth);
         };
 
         // Notificar vida inicial del enemigo
-        OnLifeChanged?.Invoke(enemigoHealth);
+        GameEvents.OnLifeChanged.Invoke(enemigoHealth);
 
         MostrarMano();
         esperandoSeleccion = true;
 
         // Notificar mana inicial
-        OnManaChanged?.Invoke(JugadorMana, JugadorMana);
+        GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
 
         // Notificar turno jugador
-        OnTurnChanged?.Invoke(true);
+        GameEvents.OnTurnChanged.Invoke(true);
     }
 
     private void MostrarMano()
@@ -192,7 +186,7 @@ public class CombatController : MonoBehaviour
         JugadorMana -= carta.manaCost;
 
         // Notificar cambio de maná
-        OnManaChanged?.Invoke(JugadorMana, JugadorMana);
+        GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
 
         CartaVisual visual = cartasInstanciadas[index].GetComponent<CartaVisual>();
         visual.cartaLogic.EjecutarCarta(this, true);
@@ -211,13 +205,13 @@ public class CombatController : MonoBehaviour
     {
         if (enemigoHealth != null && enemigoHealth.currentHealth <= 0)
         {
-            Debug.Log("¡Has ganado!");
+            GameEvents.onEnemyDeath.Invoke();
             return;
         }
 
         if (jugadorHealth != null && jugadorHealth.currentHealth <= 0)
         {
-            Debug.Log("Has muerto");
+            GameEvents.onPlayerDeath.Invoke();
             return;
         }
 
@@ -226,8 +220,7 @@ public class CombatController : MonoBehaviour
 
     private void TurnoEnemigo()
     {
-        // Notificar turno enemigo
-        OnTurnChanged?.Invoke(false);
+        GameEvents.OnTurnChanged.Invoke(false);
 
         var manoEnemigo = enemyDeck.ObtenerMano();
 
@@ -263,8 +256,7 @@ public class CombatController : MonoBehaviour
 
     private void TurnoJugador()
     {
-        // Notificar turno jugador
-        OnTurnChanged?.Invoke(true);
+        GameEvents.OnTurnChanged.Invoke(true);
 
         esperandoSeleccion = true;
         MostrarCartaActual();
@@ -278,5 +270,8 @@ public class CombatController : MonoBehaviour
     private void JugadorMuerto()
     {
         Debug.Log("Has muerto");
+        deathScreen.ShowDeathScreen();
     }
+
 }
+

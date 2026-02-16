@@ -8,12 +8,12 @@ public class ManaOrbUI : MonoBehaviour
 
     private void OnEnable()
     {
-        CombatController.OnManaChanged += UpdateMana;
+        GameEvents.OnManaChanged.AddListener(UpdateMana);
     }
 
     private void OnDisable()
     {
-        CombatController.OnManaChanged -= UpdateMana;
+        GameEvents.OnManaChanged.RemoveListener(UpdateMana);
     }
 
     private void UpdateMana(int manaActual, int manaMax)
@@ -28,6 +28,7 @@ public class ManaOrbUI : MonoBehaviour
         fillImage.fillAmount = amount;
     }
 }
+
 
 
 

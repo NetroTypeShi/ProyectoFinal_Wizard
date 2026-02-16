@@ -9,25 +9,30 @@ public class HealthComponent : MonoBehaviour
     public System.Action OnDeath;
     public System.Action<int> OnDamage;
     public System.Action<int, int> OnHealthChanged;
-  
 
     private void Awake()
     {
         currentHealth = maxHealth;
 
-        // Notificar vida inicial
+        // Evento interno
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        // Evento global
+        GameEvents.OnLifeChanged.Invoke(this);
     }
 
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
 
-        // Notificar daño
+        // Evento interno
         OnDamage?.Invoke(currentHealth);
 
-        // Notificar cambio de vida
+        // Evento interno
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        // Evento global
+        GameEvents.OnLifeChanged.Invoke(this);
 
         if (currentHealth <= 0)
         {
@@ -40,12 +45,20 @@ public class HealthComponent : MonoBehaviour
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
 
-        // Notificar cambio de vida
+        // Evento interno
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        // Evento global
+        GameEvents.OnLifeChanged.Invoke(this);
     }
 
     private void Die()
     {
         OnDeath?.Invoke();
+
+        if (CompareTag("Player"))
+            GameEvents.onPlayerDeath.Invoke();
+        else if (CompareTag("Enemy"))
+            GameEvents.onEnemyDeath.Invoke();
     }
 }
