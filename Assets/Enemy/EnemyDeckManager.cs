@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class EnemyDeckManager : MonoBehaviour
@@ -25,12 +25,13 @@ public class EnemyDeckManager : MonoBehaviour
     {
         if (cartasEnMazo.Count == 0)
         {
-            Debug.LogWarning("El mazo del enemigo est� vac�o");
+            Debug.LogWarning("El mazo del enemigo está vacío");
             return;
         }
 
         int index = Random.Range(0, cartasEnMazo.Count);
         manoActual.Add(cartasEnMazo[index]);
+        cartasEnMazo.RemoveAt(index); // ← IMPORTANTE
     }
 
     public List<CardData> ObtenerMano()
@@ -44,5 +45,6 @@ public class EnemyDeckManager : MonoBehaviour
         RobarCarta();
     }
 }
+
 
 

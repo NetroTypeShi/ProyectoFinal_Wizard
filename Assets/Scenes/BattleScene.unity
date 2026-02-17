@@ -181,6 +181,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeckManager
   cartasEnMazo:
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
   manoSize: 3
 --- !u!4 &50866598
 Transform:
@@ -197,37 +199,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &287290195
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 287290196}
-  m_Layer: 0
-  m_Name: cartasspawnpoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &287290196
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 287290195}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.18779421, y: 0.69202036, z: -0.19412728, w: 0.6694444}
-  m_LocalPosition: {x: -6.68, y: 1.38, z: -23.86}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 31.34, y: 91.9, z: 0}
 --- !u!1001 &303302607
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -467,6 +438,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 311074245}
   m_CullTransparentMesh: 1
+--- !u!1 &334020714
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 334020715}
+  m_Layer: 0
+  m_Name: barras
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &334020715
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334020714}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -276.49173, y: -244.5, z: -23.11941}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1341983988}
+  - {fileID: 1638220441}
+  m_Father: {fileID: 2141718875}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &339622036
 GameObject:
   m_ObjectHideFlags: 0
@@ -774,7 +778,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1262583920
+--- !u!1 &1243298626
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -782,49 +786,47 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1262583921}
-  - component: {fileID: 1262583922}
+  - component: {fileID: 1243298627}
+  - component: {fileID: 1243298628}
   m_Layer: 5
-  m_Name: cartasAnimation
+  m_Name: cartasGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &1262583921
+--- !u!224 &1243298627
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1262583920}
+  m_GameObject: {fileID: 1243298626}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1968768188}
   m_Father: {fileID: 2141718875}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -404.35, y: 138.9}
   m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1262583922
-MonoBehaviour:
+  m_Pivot: {x: 1, y: 0}
+--- !u!225 &1243298628
+CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1262583920}
+  m_GameObject: {fileID: 1243298626}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e506403ec3eaf3d488ea1518a7b752b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CardDealerAnimation
-  spawnPoint: {fileID: 1348435423}
-  moveDuration: 0.5
-  dealDelay: 0.1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1341983987
 GameObject:
   m_ObjectHideFlags: 0
@@ -852,16 +854,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1341983987}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 23.11941}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2141718875}
+  m_Father: {fileID: 334020715}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -223.77, y: 186.51}
+  m_AnchoredPosition: {x: -99.02826, y: 431.01}
   m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1341983989
@@ -951,7 +953,7 @@ GameObject:
   - component: {fileID: 1348435423}
   - component: {fileID: 1348435424}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: orbe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1105,7 +1107,7 @@ PrefabInstance:
     - target: {fileID: 2845920055925868060, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: cartaPrefab
       value: 
-      objectReference: {fileID: 2998216144590256706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+      objectReference: {fileID: 6185406951624576932, guid: 2e8b9d2582d7cd441ac06a0f2a13acc0, type: 3}
     - target: {fileID: 2845920055925868060, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: mazoInicial.Array.size
       value: 5
@@ -1140,7 +1142,7 @@ PrefabInstance:
       objectReference: {fileID: 8024572400006750075, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: EnemyMana
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: enemyDeck
@@ -1151,9 +1153,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1924238068}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: separacion
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: JugadorMana
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: cartasGroup
+      value: 
+      objectReference: {fileID: 1243298628}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: deathScreen
       value: 
@@ -1171,17 +1181,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 976989027896357933, guid: dc06c403fc48cf34e9ba02043880b738, type: 3}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: levantamientoY
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: escalaBaseCarta
       value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: cartasSpawnPoint
       value: 
-      objectReference: {fileID: 287290196}
+      objectReference: {fileID: 1968768188}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: cartaVisualPrefab
       value: 
-      objectReference: {fileID: 2998216144590256706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+      objectReference: {fileID: 6185406951624576932, guid: 2e8b9d2582d7cd441ac06a0f2a13acc0, type: 3}
     - target: {fileID: 9045443966755184964, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.19617
@@ -1509,16 +1523,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1638220440}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 23.11941}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2141718875}
+  m_Father: {fileID: 334020715}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -222.85, y: -197.81}
+  m_AnchoredPosition: {x: -97.908264, y: 46.690002}
   m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1638220442
@@ -1722,6 +1736,41 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8908914419672259621, guid: 6bc3fc79f5fbb334697bfeeab3b533c0, type: 3}
   m_PrefabInstance: {fileID: 1494268053}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1968768187
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1968768188}
+  m_Layer: 5
+  m_Name: spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1968768188
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968768187}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1243298627}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &2141718875 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3498687634360468741, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
@@ -1855,16 +1904,13 @@ PrefabInstance:
       addedObject: {fileID: 1348435423}
     - targetCorrespondingSourceObject: {fileID: 3498687634360468741, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1638220441}
-    - targetCorrespondingSourceObject: {fileID: 3498687634360468741, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1341983988}
-    - targetCorrespondingSourceObject: {fileID: 3498687634360468741, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1262583921}
-    - targetCorrespondingSourceObject: {fileID: 3498687634360468741, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 784802912}
+    - targetCorrespondingSourceObject: {fileID: 3498687634360468741, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 334020715}
+    - targetCorrespondingSourceObject: {fileID: 3498687634360468741, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1243298627}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
 --- !u!1660057539 &9223372036854775807
@@ -1878,7 +1924,6 @@ SceneRoots:
   - {fileID: 13530110}
   - {fileID: 1771455054}
   - {fileID: 1377965386}
-  - {fileID: 287290196}
   - {fileID: 303302607}
   - {fileID: 1818336650}
   - {fileID: 50866598}

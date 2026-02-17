@@ -32,6 +32,12 @@ public class CombatController : MonoBehaviour
     public float separacion = 2f;
     public float levantamientoY = 0.5f;
 
+    [Header("Canvas Group Cartas")]
+    public CanvasGroup cartasGroup;
+    public float fadeSpeed = 3f;
+
+    private Coroutine fadeRoutine; // ← CORRECTO: solo paramos el fade
+
     private List<GameObject> cartasInstanciadas = new List<GameObject>();
     private int currentIndex = 0;
     private bool esperandoSeleccion = false;
@@ -41,11 +47,10 @@ public class CombatController : MonoBehaviour
         maxMana = JugadorMana;
         StartCoroutine(EsperarPlayer());
 
-        // Notificar mana inicial
         GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
-
-        // Notificar turno inicial
         GameEvents.OnTurnChanged.Invoke(true);
+
+        SetCartasAlpha(1f); // Cartas visibles al inicio
     }
 
     private IEnumerator EsperarPlayer()
@@ -61,13 +66,11 @@ public class CombatController : MonoBehaviour
         jugadorHealth = playerObj.GetComponent<HealthComponent>();
         jugadorHealth.OnDeath += JugadorMuerto;
 
-        // Escuchar vida del jugador
         jugadorHealth.OnHealthChanged += (vidaActual, vidaMax) =>
         {
             GameEvents.OnLifeChanged.Invoke(jugadorHealth);
         };
 
-        // Notificar vida inicial
         GameEvents.OnLifeChanged.Invoke(jugadorHealth);
 
         MostrarMano();
@@ -103,23 +106,20 @@ public class CombatController : MonoBehaviour
         enemigoHealth = enemigoGO.GetComponent<HealthComponent>();
         enemigoHealth.OnDeath += EnemigoMuerto;
 
-        // Escuchar vida del enemigo
         enemigoHealth.OnHealthChanged += (vidaActual, vidaMax) =>
         {
             GameEvents.OnLifeChanged.Invoke(enemigoHealth);
         };
 
-        // Notificar vida inicial del enemigo
         GameEvents.OnLifeChanged.Invoke(enemigoHealth);
 
         MostrarMano();
         esperandoSeleccion = true;
 
-        // Notificar mana inicial
         GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
-
-        // Notificar turno jugador
         GameEvents.OnTurnChanged.Invoke(true);
+
+        SetCartasAlpha(1f);
     }
 
     private void MostrarMano()
@@ -182,10 +182,7 @@ public class CombatController : MonoBehaviour
             return;
         }
 
-        // Gastar maná
         JugadorMana -= carta.manaCost;
-
-        // Notificar cambio de maná
         GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
 
         CartaVisual visual = cartasInstanciadas[index].GetComponent<CartaVisual>();
@@ -222,12 +219,21 @@ public class CombatController : MonoBehaviour
     {
         GameEvents.OnTurnChanged.Invoke(false);
 
+        SetCartasAlpha(0f); // Ocultar cartas del jugador
+
+        StartCoroutine(TurnoEnemigoCoroutine());
+    }
+
+    private IEnumerator TurnoEnemigoCoroutine()
+    {
+        yield return new WaitForSeconds(3f); // Duración del turno enemigo
+
         var manoEnemigo = enemyDeck.ObtenerMano();
 
         if (manoEnemigo == null || manoEnemigo.Count == 0)
         {
             TurnoJugador();
-            return;
+            yield break;
         }
 
         int index = Random.Range(0, manoEnemigo.Count);
@@ -236,7 +242,7 @@ public class CombatController : MonoBehaviour
         if (EnemyMana < carta.manaCost)
         {
             TurnoJugador();
-            return;
+            yield break;
         }
 
         EnemyMana -= carta.manaCost;
@@ -249,7 +255,7 @@ public class CombatController : MonoBehaviour
         enemyDeck.UsarCarta(index);
 
         if (jugadorHealth.currentHealth <= 0)
-            return;
+            yield break;
 
         TurnoJugador();
     }
@@ -260,6 +266,8 @@ public class CombatController : MonoBehaviour
 
         esperandoSeleccion = true;
         MostrarCartaActual();
+
+        SetCartasAlpha(1f); // Mostrar cartas del jugador
     }
 
     private void EnemigoMuerto()
@@ -273,5 +281,28 @@ public class CombatController : MonoBehaviour
         deathScreen.ShowDeathScreen();
     }
 
+    // ---------------------------
+    //   FADE DEL CANVAS GROUP
+    // ---------------------------
+    private void SetCartasAlpha(float target)
+    {
+        if (fadeRoutine != null)
+            StopCoroutine(fadeRoutine);
+
+        fadeRoutine = StartCoroutine(FadeCartas(target));
+    }
+
+    private IEnumerator FadeCartas(float target)
+    {
+        while (!Mathf.Approximately(cartasGroup.alpha, target))
+        {
+            cartasGroup.alpha = Mathf.Lerp(cartasGroup.alpha, target, Time.deltaTime * fadeSpeed);
+            yield return null;
+        }
+
+        cartasGroup.alpha = target;
+    }
 }
+
+
 

@@ -39,7 +39,7 @@ public class DeathScreenUI : MonoBehaviour
             t += Time.deltaTime;
             float alpha = Mathf.Clamp01(t / fadeDuration);
 
-            bgColor.a = alpha * 0.85f; // 85% opacidad como Dark Souls
+            bgColor.a = alpha * 0.85f; 
             textColor.a = alpha;
 
             background.color = bgColor;

@@ -1,19 +1,14 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class DeckManager : MonoBehaviour
 {
-    [Header("Datos del mazo")]
     public List<CardData> mazoInicial;
-
-    [Header("Prefab de carta")]
-    public GameObject cartaPrefab;
-
     private List<CardData> mazo = new List<CardData>();
     private List<CardData> descarte = new List<CardData>();
     private List<CardData> mano = new List<CardData>();
 
-    public int tama�oMano = 5;
+    public int tamañoMano = 5;
 
     private void Awake()
     {
@@ -46,22 +41,20 @@ public class DeckManager : MonoBehaviour
 
     private void RobarManoInicial()
     {
-        for (int i = 0; i < tama�oMano; i++)
+        for (int i = 0; i < tamañoMano; i++)
             RobarCarta();
     }
 
     public void RobarCarta()
     {
-        if (mazo.Count == 0)
+        if (mazo.Count == 0 && descarte.Count > 0)
         {
-            foreach (var c in descarte)
-                mazo.Add(c);
-
+            mazo.AddRange(descarte);
             descarte.Clear();
             Barajar(mazo);
         }
 
-        if (mazo.Count > 0)
+        if (mazo.Count > 0 && mano.Count < tamañoMano) // ← IMPORTANTE
         {
             var carta = mazo[0];
             mazo.RemoveAt(0);
@@ -83,4 +76,5 @@ public class DeckManager : MonoBehaviour
         RobarCarta();
     }
 }
+
 

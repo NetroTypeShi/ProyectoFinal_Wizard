@@ -1,30 +1,25 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class CartaVisual : MonoBehaviour
 {
-    public SpriteRenderer spriteRenderer;
+    [Header("UI Elements")]
+    public Image icono;                     // Imagen principal de la carta
+
+
+    [Header("Lógica")]
     public CartaAtaque cartaLogic;
 
     public void Configurar(CardData data)
     {
+        // Asignar datos a la lógica
         cartaLogic.data = data;
-        spriteRenderer.sprite = data.artwork;
 
-        AjustarEscalaCarta(spriteRenderer, 1.5f); // tamaño uniforme
-    }
+        // Asignar imagen
+        icono.sprite = data.artwork;
 
-    private void AjustarEscalaCarta(SpriteRenderer sr, float tamañoDeseado)
-    {
-        if (sr.sprite == null) return;
-
-        // Tamaño real del sprite en unidades
-        var bounds = sr.sprite.bounds;
-        float maxDimension = Mathf.Max(bounds.size.x, bounds.size.y);
-
-        // Factor de escala para que todas midan lo mismo
-        float factor = tamañoDeseado / maxDimension;
-
-        sr.transform.localScale = Vector3.one * factor;
+       
     }
 }
 

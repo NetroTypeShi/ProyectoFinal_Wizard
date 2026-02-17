@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 2885680069526222287}
   - component: {fileID: 8680832497237678005}
   - component: {fileID: 8420717705550081700}
+  - component: {fileID: -6897986281929683480}
   m_Layer: 0
   m_Name: Enemigo
   m_TagString: Enemy
@@ -229,8 +230,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e15ed24638abad54fac89b0c62d13979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
-  maxHealth: 100
-  currentHealth: 0
+  maxHealth: 200
+  currentHealth: 200
 --- !u!114 &2885680069526222287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,6 +277,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1800938087721747053}
   m_CullTransparentMesh: 1
+--- !u!114 &-6897986281929683480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800938087721747053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5588c109396b4394a98d5652df9ea348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDeckManager
+  cartasEnMazo:
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  manoSize: 3
 --- !u!1 &4579340828280601227
 GameObject:
   m_ObjectHideFlags: 0
