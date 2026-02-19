@@ -28,12 +28,27 @@ public class PlayerMovement : MonoBehaviour
     
     private bool isGrounded = false;
     private int jumpCount = 0;
-    public int maxJumps = 2; 
+    public int maxJumps = 2;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        if (CheckpointManager.instance != null)
+        {
+            if (CheckpointManager.instance.currentCheckpoint != null)
+            {
+                Debug.Log("Respawn en checkpoint: " + CheckpointManager.instance.currentCheckpoint.name);
+                transform.position = CheckpointManager.instance.GetRespawnPosition();
+            }
+            else
+            {
+                Debug.Log("NO hay checkpoint guardado, apareciendo en posición por defecto");
+            }
+        }
     }
+
+
 
     void Update()
     {

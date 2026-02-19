@@ -1715,6 +1715,10 @@ PrefabInstance:
       propertyPath: fadeGroup
       value: 
       objectReference: {fileID: 303302608}
+    - target: {fileID: 7994355098172730101, guid: b59b16f825df15c4b96a13d5956ee69d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class CombatController : MonoBehaviour
 {
@@ -36,7 +37,7 @@ public class CombatController : MonoBehaviour
     public CanvasGroup cartasGroup;
     public float fadeSpeed = 3f;
 
-    private Coroutine fadeRoutine; // ← CORRECTO: solo paramos el fade
+    private Coroutine fadeRoutine;
 
     private List<GameObject> cartasInstanciadas = new List<GameObject>();
     private int currentIndex = 0;
@@ -50,7 +51,7 @@ public class CombatController : MonoBehaviour
         GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
         GameEvents.OnTurnChanged.Invoke(true);
 
-        SetCartasAlpha(1f); // Cartas visibles al inicio
+        SetCartasAlpha(1f);
     }
 
     private IEnumerator EsperarPlayer()
@@ -219,14 +220,14 @@ public class CombatController : MonoBehaviour
     {
         GameEvents.OnTurnChanged.Invoke(false);
 
-        SetCartasAlpha(0f); // Ocultar cartas del jugador
+        SetCartasAlpha(0f);
 
         StartCoroutine(TurnoEnemigoCoroutine());
     }
 
     private IEnumerator TurnoEnemigoCoroutine()
     {
-        yield return new WaitForSeconds(3f); // Duración del turno enemigo
+        yield return new WaitForSeconds(3f);
 
         var manoEnemigo = enemyDeck.ObtenerMano();
 
@@ -267,7 +268,7 @@ public class CombatController : MonoBehaviour
         esperandoSeleccion = true;
         MostrarCartaActual();
 
-        SetCartasAlpha(1f); // Mostrar cartas del jugador
+        SetCartasAlpha(1f);
     }
 
     private void EnemigoMuerto()
@@ -279,11 +280,17 @@ public class CombatController : MonoBehaviour
     {
         Debug.Log("Has muerto");
         deathScreen.ShowDeathScreen();
+
+        StartCoroutine(VolverAlMundo());
     }
 
-    // ---------------------------
-    //   FADE DEL CANVAS GROUP
-    // ---------------------------
+    private IEnumerator VolverAlMundo()
+    {
+        yield return new WaitForSeconds(2f);
+
+        SceneManager.LoadScene("SampleScene"); 
+    }
+
     private void SetCartasAlpha(float target)
     {
         if (fadeRoutine != null)
@@ -303,6 +310,7 @@ public class CombatController : MonoBehaviour
         cartasGroup.alpha = target;
     }
 }
+
 
 
 
