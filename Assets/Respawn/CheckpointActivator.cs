@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class CheckpointActivator : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class CheckpointActivator : MonoBehaviour
     public ParticleSystem activateParticles;
 
     private bool playerInRange = false;
-    private bool activatedOnce = false;   // ← controla si ya se activó por primera vez
+    private bool activatedOnce = false;
 
     private void Start()
     {
@@ -18,7 +19,6 @@ public class CheckpointActivator : MonoBehaviour
 
     private void Update()
     {
-        // Si ya se activó una vez, nunca mostramos el texto
         if (activatedOnce)
             return;
 
@@ -29,30 +29,31 @@ public class CheckpointActivator : MonoBehaviour
             return;
         }
 
-        // Mostrar texto mientras está cerca
         if (interactText != null)
             interactText.gameObject.SetActive(true);
 
-        // Activar checkpoint
         if (Input.GetKeyDown(KeyCode.E))
         {
             CheckpointManager.instance.ActivateCheckpoint(checkpoint);
             Debug.Log("Checkpoint activado: " + checkpoint.name);
 
-            // SOLO LA PRIMERA VEZ
             activatedOnce = true;
 
-            // Partículas
-            if (activateParticles != null)
-                activateParticles.Play();
+            // Retraso de 0.5s antes de reproducir partículas
+            StartCoroutine(PlayParticlesDelayed());
 
-            // Ocultar texto para siempre
             if (interactText != null)
                 interactText.gameObject.SetActive(false);
 
-            // Evitar que vuelva a salir
             playerInRange = false;
         }
+    }
+
+    private IEnumerator PlayParticlesDelayed()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (activateParticles != null)
+            activateParticles.Play();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -72,6 +73,7 @@ public class CheckpointActivator : MonoBehaviour
         }
     }
 }
+
 
 
 

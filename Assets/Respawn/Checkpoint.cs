@@ -2,15 +2,20 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
-    public Transform spawnPoint; // Lugar exacto donde reaparece el jugador
+    public static Checkpoint Instance;
 
-    private void OnDrawGizmos()
+    private void Awake()
     {
-        if (spawnPoint != null)
+        if (Instance != null)
         {
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(spawnPoint.position, 0.3f);
+            Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 }
+
+
 
