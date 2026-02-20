@@ -499,6 +499,8 @@ GameObject:
   - component: {fileID: 6013387647547842427}
   - component: {fileID: 2331438802222389862}
   - component: {fileID: 4321431348007185065}
+  - component: {fileID: 6499175919324051802}
+  - component: {fileID: 178201606941033470}
   m_Layer: 5
   m_Name: cartaImagePrefab
   m_TagString: Untagged
@@ -601,6 +603,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CartaAtaque
   data: {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+--- !u!114 &6499175919324051802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6185406951624576932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ce8a28ce83f7014daf1426e25b50dde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyCardAnimator
+  cardImage: {fileID: 6013387647547842427}
+  cardName: {fileID: 4271809024825783549}
+  canvasGroup: {fileID: 178201606941033470}
+  startScale: 0.2
+  endScale: 1
+  fadeDuration: 1
+  moveDuration: 0.5
+--- !u!225 &178201606941033470
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6185406951624576932}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6427538996734960453
 GameObject:
   m_ObjectHideFlags: 0
