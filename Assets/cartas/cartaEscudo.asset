@@ -20,3 +20,4 @@ MonoBehaviour:
   defensePercent: 0.4
   type: 1
   tipo: 5
+  failChance: 10

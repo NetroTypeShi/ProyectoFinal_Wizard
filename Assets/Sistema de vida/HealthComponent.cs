@@ -58,8 +58,8 @@ public class HealthComponent : MonoBehaviour
 
         if (CompareTag("Player"))
         {
-            // Avisar al sistema de respawn que el jugador murió
-            CheckpointManager.instance.shouldRespawn = true;
+            if (CheckpointManager.instance != null)
+                CheckpointManager.instance.shouldRespawn = true;
 
             GameEvents.onPlayerDeath.Invoke();
         }
@@ -68,5 +68,6 @@ public class HealthComponent : MonoBehaviour
             GameEvents.onEnemyDeath.Invoke();
         }
     }
+
 
 }

@@ -3,13 +3,18 @@ using System.Collections.Generic;
 
 public class EnemyDeckManager : MonoBehaviour
 {
-    public List<CardData> cartasEnMazo;
+    public EnemyStats enemyStats; // ⭐ referencia al ScriptableObject
+
     public int manoSize = 3;
 
+    private List<CardData> cartasEnMazo = new List<CardData>();
     private List<CardData> manoActual = new List<CardData>();
 
     private void Start()
     {
+        // Copiar el mazo base del ScriptableObject
+        cartasEnMazo = new List<CardData>(enemyStats.mazoBase);
+
         RobarManoInicial();
     }
 
@@ -24,14 +29,11 @@ public class EnemyDeckManager : MonoBehaviour
     private void RobarCarta()
     {
         if (cartasEnMazo.Count == 0)
-        {
-            Debug.LogWarning("El mazo del enemigo está vacío");
             return;
-        }
 
         int index = Random.Range(0, cartasEnMazo.Count);
         manoActual.Add(cartasEnMazo[index]);
-        cartasEnMazo.RemoveAt(index); // ← IMPORTANTE
+        cartasEnMazo.RemoveAt(index);
     }
 
     public List<CardData> ObtenerMano()
@@ -41,10 +43,13 @@ public class EnemyDeckManager : MonoBehaviour
 
     public void UsarCarta(int index)
     {
+        if (index < 0 || index >= manoActual.Count)
+            return;
+
         manoActual.RemoveAt(index);
-        RobarCarta();
+
+        if (cartasEnMazo.Count > 0)
+            RobarCarta();
     }
 }
-
-
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "EnemyStats", menuName = "Combat/Enemy Stats")]
 public class EnemyStats : ScriptableObject
@@ -9,7 +10,8 @@ public class EnemyStats : ScriptableObject
     public Sprite enemySprite;
 
     [Header("Tipo elemental del enemigo")]
-    public ElementType tipoEnemigo;   // ← AHORA EL TIPO ESTÁ AQUÍ
+    public ElementType tipoEnemigo;
+
+    [Header("Mazo del enemigo")]
+    public List<CardData> mazoBase;   // ⭐ AÑADIDO
 }
-
-

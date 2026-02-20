@@ -42,7 +42,6 @@ public class EnemyBattleStarter : MonoBehaviour
 
     private void Update()
     {
-        // Si NO está persiguiendo todavía
         if (!chasing)
         {
             if (vision.CanSeePlayer(player))
@@ -60,10 +59,8 @@ public class EnemyBattleStarter : MonoBehaviour
                 return;
         }
 
-        // Perseguir al jugador
         agent.SetDestination(player.position);
 
-        // Si el jugador se aleja demasiado → dejar de perseguir
         float chaseDistance = Vector3.Distance(transform.position, player.position);
         if (chaseDistance > maxChaseDistance)
         {
@@ -71,7 +68,6 @@ public class EnemyBattleStarter : MonoBehaviour
             return;
         }
 
-        // Si está lo suficientemente cerca → combate
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= engageDistance && chasing)
         {
@@ -82,10 +78,9 @@ public class EnemyBattleStarter : MonoBehaviour
     private void StopChasing()
     {
         chasing = false;
-        alertShown = false; // ← Permite que la exclamación vuelva a aparecer
+        alertShown = false;
         agent.speed = patrolSpeed;
 
-        // Volver al punto original
         agent.SetDestination(originalPosition);
     }
 
@@ -93,21 +88,17 @@ public class EnemyBattleStarter : MonoBehaviour
     {
         agent.isStopped = true;
 
-        // Guardar enemigo
         PlayerPrefs.SetString("LastEnemy", gameObject.name);
 
-        // Bloquear movimiento del jugador
         playerMovement.enabled = false;
 
-        // Iniciar transición
-        FindObjectOfType<SceneFader>().FadeToScene(battleSceneName);
+        
+        SceneFader fader = FindFirstObjectByType<SceneFader>();
+        fader.FadeToScene(battleSceneName);
     }
 
-
-
-private IEnumerator ShowAlertIcon()
+    private IEnumerator ShowAlertIcon()
     {
-        // Instanciar el icono encima del enemigo
         GameObject icon = Instantiate(alertIconPrefab, transform);
         icon.transform.localPosition = new Vector3(0, 2f, 0);
 
@@ -116,7 +107,3 @@ private IEnumerator ShowAlertIcon()
         Destroy(icon);
     }
 }
-
-
-
-

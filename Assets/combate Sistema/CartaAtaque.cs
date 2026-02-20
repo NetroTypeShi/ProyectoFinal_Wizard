@@ -6,6 +6,18 @@ public class CartaAtaque : MonoBehaviour
 
     public void EjecutarCarta(CombatController combate, bool esJugador)
     {
+        int roll = Random.Range(0, 100);
+
+        if (roll < data.failChance)
+        {
+            Debug.Log($"❌ La carta {data.cardName} FALLÓ ({roll}% < {data.failChance}%)");
+
+            if (combate != null)
+                combate.MostrarMensaje("¡Fallo!");
+
+            return;
+        }
+
         switch (data.type)
         {
             case CardType.Damage:
@@ -22,6 +34,8 @@ public class CartaAtaque : MonoBehaviour
         }
     }
 
+
+
     void EjecutarDaño(CombatController combate, bool esJugador)
     {
         if (esJugador)
@@ -35,11 +49,10 @@ public class CartaAtaque : MonoBehaviour
         }
         else
         {
-            // Multiplicador elemental enemigo → jugador
             float mult = TypeChart.GetMultiplier(data.tipo, combate.tipoJugador);
             int dmg = Mathf.RoundToInt(data.damage * mult);
 
-            // 🔥 Defensa de 3 turnos
+            // Defensa activa
             if (combate.defensaActiva && combate.defensaTurnosRestantes > 0)
             {
                 dmg = Mathf.RoundToInt(dmg * (1f - combate.defensaPorcentaje));
@@ -60,7 +73,7 @@ public class CartaAtaque : MonoBehaviour
     {
         combate.defensaActiva = true;
         combate.defensaPorcentaje = data.defensePercent;
-        combate.defensaTurnosRestantes = 3; // ← Dura 3 turnos enemigos
+        combate.defensaTurnosRestantes = 3;
 
         Debug.Log($"DEFENSA ACTIVADA: durante 3 turnos el enemigo hará un {data.defensePercent * 100}% menos de daño");
     }
@@ -71,8 +84,6 @@ public class CartaAtaque : MonoBehaviour
         Debug.Log($"{data.cardName} curó {data.healAmount} de vida al jugador");
     }
 }
-
-
 
 
 

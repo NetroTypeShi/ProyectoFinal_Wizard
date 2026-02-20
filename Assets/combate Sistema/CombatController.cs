@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class CombatController : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class CombatController : MonoBehaviour
     public int JugadorMana = 5;
     public int EnemyMana = 5;
     private int maxMana;
+
     [Header("Tipo elemental del jugador")]
     public ElementType tipoJugador = ElementType.Fuego;
     public DeathScreenUI deathScreen;
@@ -37,6 +39,9 @@ public class CombatController : MonoBehaviour
     public CanvasGroup cartasGroup;
     public float fadeSpeed = 3f;
 
+    [Header("UI Mensajes")]
+    public TextMeshProUGUI failText;   // ⭐ AÑADIDO
+
     private Coroutine fadeRoutine;
 
     private List<GameObject> cartasInstanciadas = new List<GameObject>();
@@ -52,6 +57,9 @@ public class CombatController : MonoBehaviour
         GameEvents.OnTurnChanged.Invoke(true);
 
         SetCartasAlpha(1f);
+
+        if (failText != null)
+            failText.gameObject.SetActive(false); // ⭐ Ocultar al inicio
     }
 
     private IEnumerator EsperarPlayer()
@@ -288,7 +296,7 @@ public class CombatController : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
 
-        SceneManager.LoadScene("SampleScene"); 
+        SceneManager.LoadScene("SampleScene");
     }
 
     private void SetCartasAlpha(float target)
@@ -309,8 +317,26 @@ public class CombatController : MonoBehaviour
 
         cartasGroup.alpha = target;
     }
-}
 
+    // ⭐ MÉTODO PARA MOSTRAR MENSAJES (FALLO DE CARTA)
+    public void MostrarMensaje(string texto)
+    {
+        StartCoroutine(MostrarMensajeCoroutine(texto));
+    }
+
+    private IEnumerator MostrarMensajeCoroutine(string texto)
+    {
+        if (failText == null)
+            yield break;
+
+        failText.text = texto;
+        failText.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(1.2f);
+
+        failText.gameObject.SetActive(false);
+    }
+}
 
 
 

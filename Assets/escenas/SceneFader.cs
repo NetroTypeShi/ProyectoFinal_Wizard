@@ -2,8 +2,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using System.Collections;
 
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class SceneFader : MonoBehaviour
 {

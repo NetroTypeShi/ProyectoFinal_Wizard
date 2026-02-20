@@ -28,6 +28,10 @@ public class CardData : ScriptableObject
 
     [Header("Tipo elemental")]
     public ElementType tipo;
+
+    [Header("Probabilidad de fallo")]
+    [Range(0, 100)]
+    public int failChance = 0;
 }
 
 

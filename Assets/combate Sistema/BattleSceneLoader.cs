@@ -28,10 +28,13 @@ public class BattleSceneLoader : MonoBehaviour
         // Instanciar enemigo
         GameObject enemy = Instantiate(enemyPrefab, enemyBattlePos.position, enemyBattlePos.rotation);
 
+        // Buscar CombatController con la nueva API
+        CombatController combat = FindFirstObjectByType<CombatController>();
+
         // Iniciar combate AHORA que el jugador ya está vivo
-        CombatController combat = FindObjectOfType<CombatController>();
         combat.IniciarCombate(enemy);
     }
 }
+
 
 
