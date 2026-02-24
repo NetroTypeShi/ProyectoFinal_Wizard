@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -12,20 +12,33 @@ public class CartaVisual : MonoBehaviour
     public TMP_Text healText;
     public TMP_Text defenseText;
 
-    [Header("L�gica")]
+    [Header("Lógica")]
     public CartaAtaque cartaLogic;
+
+    [Header("Dorso")]
+    public Sprite backSprite;     // ⭐ Aquí arrastras tu imagen normal (importada como Sprite)
+    public bool isFaceDown = false;
 
     public void Configurar(CardData data)
     {
+        // Guardar la lógica
         cartaLogic.data = data;
 
-        // Imagen
+        if (isFaceDown)
+        {
+            // ⭐ Mostrar dorso
+            icono.sprite = backSprite;
+            nameText.text = "";
+            manaText.text = "";
+            damageText.gameObject.SetActive(false);
+            healText.gameObject.SetActive(false);
+            defenseText.gameObject.SetActive(false);
+            return;
+        }
+
+        // ⭐ Mostrar cara normal
         icono.sprite = data.artwork;
-
-        // Nombre
         nameText.text = data.cardName;
-
-        // Coste de man�
         manaText.text = data.manaCost.ToString();
 
         // Ocultar todo por defecto
@@ -33,7 +46,7 @@ public class CartaVisual : MonoBehaviour
         healText.gameObject.SetActive(false);
         defenseText.gameObject.SetActive(false);
 
-        // Mostrar solo lo que corresponde
+        // ⭐ Mostrar solo lo que corresponde según CardType
         switch (data.type)
         {
             case CardType.Damage:
@@ -53,6 +66,8 @@ public class CartaVisual : MonoBehaviour
         }
     }
 }
+
+
 
 
 

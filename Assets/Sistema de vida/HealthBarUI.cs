@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 
 public class HealthBarUI : MonoBehaviour
@@ -9,6 +10,9 @@ public class HealthBarUI : MonoBehaviour
 
     [Header("Imagen del relleno")]
     public Image fillImage;
+
+    [Header("Texto de vida")]
+    public TextMeshProUGUI lifeText;
 
     [Header("Shake Settings")]
     public float shakeDuration = 0.15f;
@@ -55,6 +59,10 @@ public class HealthBarUI : MonoBehaviour
         );
         fillImage.fillAmount = amount;
 
+        // ⭐ Actualizar texto de vida
+        if (lifeText != null)
+            lifeText.text = $"{healthComp.currentHealth} / {healthComp.maxHealth}";
+
         // Si ha recibido daño → shake
         StartCoroutine(Shake());
     }
@@ -77,6 +85,7 @@ public class HealthBarUI : MonoBehaviour
         rectTransform.anchoredPosition = originalPosition;
     }
 }
+
 
 
 

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
+
 
 public class Enemy : MonoBehaviour
 {
@@ -63,14 +65,31 @@ public class Enemy : MonoBehaviour
             Debug.LogError("EnemyStats o HealthComponent no asignados en " + name);
         }
     }
-
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         originPos = transform.position;
         wanderTimer = wanderInterval;
 
-        // Instanciar UI encima del enemigo
+        if (EnemyStateManager.enemyDead)
+        {
+            gameObject.SetActive(false);
+
+            if (Time.time >= EnemyStateManager.respawnTime)
+            {
+                EnemyStateManager.enemyDead = false;
+                gameObject.SetActive(true);
+            }
+            else
+            {
+                // ⭐ Ahora la corrutina la ejecuta el RespawnManager
+                RespawnManager.instance.StartRespawn(gameObject);
+            }
+
+            return;
+        }
+
+        // Instanciar UI (solo si está vivo)
         if (uiPrefab != null)
         {
             uiInstance = Instantiate(uiPrefab, transform);
@@ -79,38 +98,20 @@ public class Enemy : MonoBehaviour
             tipoIcono = uiInstance.transform.Find("Icon").GetComponent<UnityEngine.UI.Image>();
             nombreTexto = uiInstance.transform.Find("NameText").GetComponent<TMPro.TextMeshProUGUI>();
 
-            // Nombre del enemigo
             nombreTexto.text = stats.enemyName;
 
-            // Icono del tipo
             switch (tipoEnemigo)
             {
-                case ElementType.Fuego:
-                    tipoIcono.sprite = iconFuego;
-                    break;
-
-                case ElementType.Hielo:
-                    tipoIcono.sprite = iconHielo;
-                    break;
-
-                case ElementType.Rayo:
-                    tipoIcono.sprite = iconRayo;
-                    break;
-
-                case ElementType.Agua:
-                    tipoIcono.sprite = iconAgua;
-                    break;
-
-                case ElementType.Vida:
-                    tipoIcono.sprite = iconVida;
-                    break;
-
-                case ElementType.Muerte:
-                    tipoIcono.sprite = iconMuerte;
-                    break;
+                case ElementType.Fuego: tipoIcono.sprite = iconFuego; break;
+                case ElementType.Hielo: tipoIcono.sprite = iconHielo; break;
+                case ElementType.Rayo: tipoIcono.sprite = iconRayo; break;
+                case ElementType.Agua: tipoIcono.sprite = iconAgua; break;
+                case ElementType.Vida: tipoIcono.sprite = iconVida; break;
+                case ElementType.Muerte: tipoIcono.sprite = iconMuerte; break;
             }
         }
     }
+
 
     void Update()
     {

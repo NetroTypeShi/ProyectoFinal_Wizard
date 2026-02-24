@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Ground
   - Enemy
+  - PlayerDamagePoint
+  - EnemyDamagePoint
+  - 'EnemyShield '
+  - 'PlayerShield '
   layers:
   - Default
   - TransparentFX
@@ -13,8 +17,8 @@ TagManager:
   - Player
   - Water
   - UI
-  - 
-  - 
+  - PlayerShield
+  - EnemyShield
   - 
   - 
   - 
@@ -45,6 +49,9 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 4128054509
+    locked: 0
+  - name: New Layer 2
+    uniqueID: 4105065631
     locked: 0
   m_RenderingLayers:
   - Default

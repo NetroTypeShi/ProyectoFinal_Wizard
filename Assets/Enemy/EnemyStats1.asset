@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   enemyName: enemigo 1
   maxHealth: 200
-  maxMana: 50
+  maxMana: 100
   enemySprite: {fileID: 5084661014962647745, guid: 2f90eb840bd0cf4438d49759bc08d718, type: 3}
   tipoEnemigo: 0
   mazoBase:
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}

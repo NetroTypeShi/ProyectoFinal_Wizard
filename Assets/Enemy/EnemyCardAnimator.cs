@@ -10,7 +10,7 @@ public class EnemyCardAnimator : MonoBehaviour
     public CanvasGroup canvasGroup;
 
     [Header("Escala")]
-    public float startScale = 0.2f;
+    public float startScale = 0.2f;   // ⭐ Se sobrescribe desde EnemyDeckManager
     public float endScale = 1f;
 
     [Header("Duraciones")]
@@ -29,9 +29,8 @@ public class EnemyCardAnimator : MonoBehaviour
         // ⭐ Punto de control para curva izquierda → derecha
         Vector3 controlPoint = (startPos + endPos) / 2f;
 
-        // Siempre empieza hacia la izquierda y termina hacia la derecha
-        controlPoint.x = startPos.x - 120f;  // se va a la izquierda primero
-        controlPoint.y = Mathf.Lerp(startPos.y, endPos.y, 0.5f); // altura estable
+        controlPoint.x = startPos.x - 120f;
+        controlPoint.y = Mathf.Lerp(startPos.y, endPos.y, 0.5f);
 
         // ⭐ FADE IN
         float t = 0;
@@ -43,14 +42,13 @@ public class EnemyCardAnimator : MonoBehaviour
             yield return null;
         }
 
-        // ⭐ MOVIMIENTO EN CURVA (Bezier izquierda → derecha)
+        // ⭐ MOVIMIENTO EN CURVA (Bezier)
         t = 0;
         while (t < moveDuration)
         {
             t += Time.deltaTime;
             float p = Mathf.SmoothStep(0, 1, t / moveDuration);
 
-            // Bezier cuadrática
             Vector3 pos =
                 Mathf.Pow(1 - p, 2) * startPos +
                 2 * (1 - p) * p * controlPoint +
@@ -84,5 +82,6 @@ public class EnemyCardAnimator : MonoBehaviour
         Destroy(gameObject);
     }
 }
+
 
 

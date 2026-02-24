@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
@@ -40,7 +40,22 @@ public class CombatController : MonoBehaviour
     public float fadeSpeed = 3f;
 
     [Header("UI Mensajes")]
-    public TextMeshProUGUI failText;   // ⭐ AÑADIDO
+    public TextMeshProUGUI failText;
+
+    [Header("Damage Popup")]
+    public GameObject damagePopupPrefab;
+    public Canvas canvas;
+
+    [Header("Damage Popup Targets")]
+    public Transform enemyDamagePoint;
+    public Transform playerDamagePoint;
+
+    [Header("Shield Orbit")]
+    public GameObject shieldOrbitPrefab;
+    private GameObject shieldActivo;
+
+    // ⭐ Referencia al enemigo del mundo
+    private GameObject enemigoDelMundo;
 
     private Coroutine fadeRoutine;
 
@@ -59,7 +74,7 @@ public class CombatController : MonoBehaviour
         SetCartasAlpha(1f);
 
         if (failText != null)
-            failText.gameObject.SetActive(false); // ⭐ Ocultar al inicio
+            failText.gameObject.SetActive(false);
     }
 
     private IEnumerator EsperarPlayer()
@@ -111,6 +126,8 @@ public class CombatController : MonoBehaviour
 
     public void IniciarCombate(GameObject enemigoGO)
     {
+        enemigoDelMundo = enemigoGO;
+
         enemigo = enemigoGO.GetComponent<Enemy>();
         enemigoHealth = enemigoGO.GetComponent<HealthComponent>();
         enemigoHealth.OnDeath += EnemigoMuerto;
@@ -266,6 +283,8 @@ public class CombatController : MonoBehaviour
         if (jugadorHealth.currentHealth <= 0)
             yield break;
 
+        ReducirTurnosDefensa();
+
         TurnoJugador();
     }
 
@@ -282,6 +301,29 @@ public class CombatController : MonoBehaviour
     private void EnemigoMuerto()
     {
         Debug.Log("El enemigo ha muerto");
+
+        // ⭐ Guardar estado global
+        EnemyStateManager.enemyDead = true;
+
+        // ⭐ Guardar cuándo debe reaparecer (10 segundos)
+        EnemyStateManager.respawnTime = Time.time + 10f;
+
+        // ⭐ 1. Destruir enemigo de batalla
+        if (enemigo != null)
+            Destroy(enemigo.gameObject);
+
+        // ⭐ 2. Ocultar enemigo del mundo
+        if (enemigoDelMundo != null)
+            enemigoDelMundo.SetActive(false);
+
+        // ⭐ 3. Volver al mundo tras victoria
+        StartCoroutine(VolverAlMundoTrasVictoria());
+    }
+
+    private IEnumerator VolverAlMundoTrasVictoria()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("SampleScene");
     }
 
     private void JugadorMuerto()
@@ -295,7 +337,6 @@ public class CombatController : MonoBehaviour
     private IEnumerator VolverAlMundo()
     {
         yield return new WaitForSeconds(2f);
-
         SceneManager.LoadScene("SampleScene");
     }
 
@@ -318,7 +359,6 @@ public class CombatController : MonoBehaviour
         cartasGroup.alpha = target;
     }
 
-    // ⭐ MÉTODO PARA MOSTRAR MENSAJES (FALLO DE CARTA)
     public void MostrarMensaje(string texto)
     {
         StartCoroutine(MostrarMensajeCoroutine(texto));
@@ -336,7 +376,53 @@ public class CombatController : MonoBehaviour
 
         failText.gameObject.SetActive(false);
     }
+
+    public void MostrarDaño(int cantidad, Transform objetivo, bool esCuracion)
+    {
+        if (objetivo == null) return;
+
+        GameObject popup = Instantiate(damagePopupPrefab, canvas.transform);
+
+        popup.transform.position = objetivo.position;
+
+        popup.GetComponent<DamagePopup>().Setup(cantidad, esCuracion);
+    }
+
+    public void MostrarEscudo(Transform objetivo)
+    {
+        if (shieldActivo != null) return;
+
+        shieldActivo = Instantiate(shieldOrbitPrefab);
+
+        ShieldOrbit orbit = shieldActivo.GetComponent<ShieldOrbit>();
+        orbit.target = objetivo;
+    }
+
+    public void QuitarEscudo()
+    {
+        if (shieldActivo != null)
+        {
+            Destroy(shieldActivo);
+            shieldActivo = null;
+        }
+    }
+
+    private void ReducirTurnosDefensa()
+    {
+        if (defensaActiva)
+        {
+            defensaTurnosRestantes--;
+
+            if (defensaTurnosRestantes <= 0)
+            {
+                defensaActiva = false;
+                QuitarEscudo();
+            }
+        }
+    }
 }
+
+
 
 
 

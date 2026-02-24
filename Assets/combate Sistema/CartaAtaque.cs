@@ -10,11 +10,8 @@ public class CartaAtaque : MonoBehaviour
 
         if (roll < data.failChance)
         {
-            Debug.Log($"❌ La carta {data.cardName} FALLÓ ({roll}% < {data.failChance}%)");
-
             if (combate != null)
                 combate.MostrarMensaje("¡Fallo!");
-
             return;
         }
 
@@ -25,7 +22,7 @@ public class CartaAtaque : MonoBehaviour
                 break;
 
             case CardType.Defense:
-                EjecutarDefensa(combate);
+                EjecutarDefensa(combate, esJugador);
                 break;
 
             case CardType.Heal:
@@ -33,8 +30,6 @@ public class CartaAtaque : MonoBehaviour
                 break;
         }
     }
-
-
 
     void EjecutarDaño(CombatController combate, bool esJugador)
     {
@@ -45,45 +40,64 @@ public class CartaAtaque : MonoBehaviour
 
             combate.enemigoHealth.TakeDamage(dañoFinal);
 
-            Debug.Log($"{data.cardName} ({data.tipo}) hizo {dañoFinal} de daño al ENEMIGO (x{mult})");
+            // ⭐ Actualizar vida del enemigo
+            GameEvents.OnLifeChanged.Invoke(combate.enemigoHealth);
+
+            if (combate.enemigoHealth.currentHealth > 0)
+                combate.MostrarDaño(dañoFinal, combate.enemyDamagePoint, false);
         }
         else
         {
             float mult = TypeChart.GetMultiplier(data.tipo, combate.tipoJugador);
             int dmg = Mathf.RoundToInt(data.damage * mult);
 
-            // Defensa activa
-            if (combate.defensaActiva && combate.defensaTurnosRestantes > 0)
+            // ⭐ Aplicar defensa SIN restar turnos aquí
+            if (combate.defensaActiva)
             {
                 dmg = Mathf.RoundToInt(dmg * (1f - combate.defensaPorcentaje));
-                combate.defensaTurnosRestantes--;
-
-                Debug.Log($"DEFENSA: quedan {combate.defensaTurnosRestantes} turnos de reducción");
-
-                if (combate.defensaTurnosRestantes <= 0)
-                    combate.defensaActiva = false;
             }
 
             combate.jugadorHealth.TakeDamage(dmg);
-            Debug.Log($"{data.cardName} ({data.tipo}) hizo {dmg} de daño al JUGADOR (x{mult})");
+
+            // ⭐ Actualizar vida del jugador
+            GameEvents.OnLifeChanged.Invoke(combate.jugadorHealth);
+
+            if (combate.jugadorHealth.currentHealth > 0)
+                combate.MostrarDaño(dmg, combate.playerDamagePoint, false);
         }
     }
 
-    void EjecutarDefensa(CombatController combate)
+    void EjecutarDefensa(CombatController combate, bool esJugador)
     {
         combate.defensaActiva = true;
         combate.defensaPorcentaje = data.defensePercent;
-        combate.defensaTurnosRestantes = 3;
 
-        Debug.Log($"DEFENSA ACTIVADA: durante 3 turnos el enemigo hará un {data.defensePercent * 100}% menos de daño");
+        // ⭐ Duración del escudo según la carta
+        combate.defensaTurnosRestantes = data.shieldTurns;
+
+        // Target 3D real
+        Transform objetivo = esJugador ?
+            combate.jugadorHealth.transform :
+            combate.enemigoHealth.transform;
+
+        combate.MostrarEscudo(objetivo);
     }
 
     void EjecutarCuracion(CombatController combate)
     {
         combate.jugadorHealth.Heal(data.healAmount);
-        Debug.Log($"{data.cardName} curó {data.healAmount} de vida al jugador");
+
+        // ⭐ Actualizar vida del jugador
+        GameEvents.OnLifeChanged.Invoke(combate.jugadorHealth);
+
+        combate.MostrarDaño(data.healAmount, combate.playerDamagePoint, true);
     }
 }
+
+
+
+
+
 
 
 

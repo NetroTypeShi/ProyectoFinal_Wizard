@@ -189,7 +189,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2141776096749985802}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -562,7 +562,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -590,6 +590,8 @@ MonoBehaviour:
   healText: {fileID: 3730551219383662391}
   defenseText: {fileID: 3863000972086260635}
   cartaLogic: {fileID: 4321431348007185065}
+  backSprite: {fileID: 21300000, guid: c7bf45f0ef95bed4491c5809fc6bf484, type: 3}
+  isFaceDown: 0
 --- !u!114 &4321431348007185065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -618,7 +620,7 @@ MonoBehaviour:
   cardImage: {fileID: 6013387647547842427}
   cardName: {fileID: 4271809024825783549}
   canvasGroup: {fileID: 178201606941033470}
-  startScale: 0.2
+  startScale: 0.5
   endScale: 1
   fadeDuration: 1
   moveDuration: 0.5
