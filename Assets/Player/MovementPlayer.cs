@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = false;
     private int jumpCount = 0;
     public int maxJumps = 2;
+    private bool jumpRequested = false;
 
 
 
@@ -48,6 +49,8 @@ public class PlayerMovement : MonoBehaviour
 
 
 
+    
+
     void Update()
     {
         float x = 0f;
@@ -64,15 +67,13 @@ public class PlayerMovement : MonoBehaviour
 
         movement = new Vector3(x, 0f, z).normalized * speed;
 
-        // Salto y doble salto
+        // Solicitar salto 
         if (Keyboard.current.spaceKey.wasPressedThisFrame && jumpCount < maxJumps)
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); 
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            jumpCount++;
+            jumpRequested = true;
         }
 
-        // Animación
+        // Animación 
         if (movement.magnitude > 0.01f)
         {
             if (Mathf.Abs(x) > Mathf.Abs(z))
@@ -116,25 +117,42 @@ public class PlayerMovement : MonoBehaviour
                 spriteRenderer.flipX = true;
                 break;
         }
+        
+
     }
 
     void FixedUpdate()
     {
-        // Movimiento horizontal siempre disponible, incluso en el aire
-        rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
+        // Movimiento horizontal 
+        Vector3 velocity = rb.linearVelocity;
+        velocity.x = movement.x;
+        velocity.z = movement.z;
+        rb.linearVelocity = velocity;
 
-        
+        // Salto y doble salto (solo AddForce, no tocar velocity.y)
+        if (jumpRequested && jumpCount < maxJumps)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpCount++;
+            jumpRequested = false;
+        }
+        else
+        {
+            jumpRequested = false;
+        }
+
+        // Gravedad personalizada
         if (rb.linearVelocity.y > 0.1f)
         {
-            // Subiendo: gravedad extra moderada
             rb.AddForce(Vector3.down * lowJumpGravity, ForceMode.Acceleration);
         }
         else if (rb.linearVelocity.y < -0.1f)
         {
-            // Bajando: gravedad extra fuerte
             rb.AddForce(Vector3.down * fallGravity, ForceMode.Acceleration);
         }
     }
+
+
 
     void OnCollisionEnter(Collision collision)
     {

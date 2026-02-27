@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78406af5aa23f9945af4527919054e39, type: 3}
-  m_Name: EnemyStats1
+  m_Name: EnemyStats2
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
-  enemyName: enemigo 1
-  maxHealth: 1000
-  maxMana: 400
+  enemyName: mago 1
+  maxHealth: 200
+  maxMana: 100
   enemySprite: {fileID: 5084661014962647745, guid: 2f90eb840bd0cf4438d49759bc08d718, type: 3}
   tipoEnemigo: 0
   mazoBase:
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
-  - {fileID: 11400000, guid: 4f55c310996d7cc45a337aab015cd5f7, type: 2}
-  - {fileID: 11400000, guid: 6693c47efe46a594b83edcda1914293c, type: 2}
-  - {fileID: 11400000, guid: b71f3bf17b163e8458da97cb9560efb4, type: 2}
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
-  expReward: 100000
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  expReward: 20

@@ -147,41 +147,32 @@ public class CombatController : MonoBehaviour
         }
     }
 
-    public void IniciarCombate(GameObject enemigoGO)
+    public void IniciarCombate(GameObject enemigoGO) 
     {
-        enemigoDelMundo = enemigoGO;
-
+        enemigoDelMundo = enemigoGO; 
         enemigo = enemigoGO.GetComponent<Enemy>();
         enemigoHealth = enemigoGO.GetComponent<HealthComponent>();
         enemigoHealth.OnDeath += EnemigoMuerto;
-
-        enemigoHealth.OnHealthChanged += (vidaActual, vidaMax) =>
-        {
-            GameEvents.OnLifeChanged.Invoke(enemigoHealth);
+        enemigoHealth.OnHealthChanged += (vidaActual, vidaMax) => 
+        { 
+            GameEvents.OnLifeChanged.Invoke(enemigoHealth); 
         };
-
         GameEvents.OnLifeChanged.Invoke(enemigoHealth);
-
         StatusEffects playerStatus = jugadorHealth.GetComponent<StatusEffects>();
-        if (playerStatus != null)
+        if (playerStatus != null) 
         {
-            playerStatus.burnTurns = 0;
-            playerStatus.burnDamage = 0;
+            playerStatus.burnTurns = 0; playerStatus.burnDamage = 0;
         }
-
-        StatusEffects enemyStatus = enemigoHealth.GetComponent<StatusEffects>();
-        if (enemyStatus != null)
+        StatusEffects enemyStatus = enemigoHealth.GetComponent<StatusEffects>(); 
+        if (enemyStatus != null) 
         {
             enemyStatus.burnTurns = 0;
-            enemyStatus.burnDamage = 0;
-        }
-
-        MostrarMano();
+            enemyStatus.burnDamage = 0; 
+        } 
+        MostrarMano(); 
         esperandoSeleccion = true;
-
         GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
         GameEvents.OnTurnChanged.Invoke(true);
-
         SetCartasAlpha(1f);
     }
 

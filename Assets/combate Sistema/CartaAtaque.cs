@@ -124,7 +124,7 @@ public class CartaAtaque : MonoBehaviour
                 Quaternion.identity
             );
 
-            GameObject.Destroy(fx, 2f);
+            GameObject.Destroy(fx, 3f);
         }
     }
 }

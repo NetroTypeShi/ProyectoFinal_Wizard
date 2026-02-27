@@ -88,11 +88,11 @@ public class EnemyBattleStarter : MonoBehaviour
     {
         agent.isStopped = true;
 
-        PlayerPrefs.SetString("LastEnemy", gameObject.name);
-
         playerMovement.enabled = false;
 
-        
+        // Guardamos este enemigo para la escena de combate
+        EnemyStateManager.enemigoSeleccionado = this.gameObject;
+
         SceneFader fader = FindFirstObjectByType<SceneFader>();
         fader.FadeToScene(battleSceneName);
     }
