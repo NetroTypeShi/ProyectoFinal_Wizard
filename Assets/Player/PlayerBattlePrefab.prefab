@@ -116,6 +116,7 @@ GameObject:
   - component: {fileID: 2389019337831408717}
   - component: {fileID: 4806620245262807750}
   - component: {fileID: 976989027896357933}
+  - component: {fileID: 5939365314433711123}
   m_Layer: 3
   m_Name: PlayerBattlePrefab
   m_TagString: Player
@@ -203,3 +204,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   maxHealth: 200
   currentHealth: 100
+--- !u!114 &5939365314433711123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748273868546826069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0918c503c3962b43b3d5f93dd19b6ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffects
+  burnDamage: 20
+  burnTurns: 3

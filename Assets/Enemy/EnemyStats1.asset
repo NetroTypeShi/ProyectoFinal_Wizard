@@ -23,3 +23,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+  expReward: 30

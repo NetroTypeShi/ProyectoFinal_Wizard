@@ -10,7 +10,7 @@ public class EnemyCardAnimator : MonoBehaviour
     public CanvasGroup canvasGroup;
 
     [Header("Escala")]
-    public float startScale = 0.2f;   // ⭐ Se sobrescribe desde EnemyDeckManager
+    public float startScale = 0.2f;
     public float endScale = 1f;
 
     [Header("Duraciones")]
@@ -19,6 +19,9 @@ public class EnemyCardAnimator : MonoBehaviour
 
     public IEnumerator PlayCardAnimation(Sprite sprite, string name, Vector3 startPos, Vector3 endPos)
     {
+        if (cardImage == null || cardName == null || canvasGroup == null)
+            yield break;
+
         cardImage.sprite = sprite;
         cardName.text = name;
 
@@ -26,26 +29,28 @@ public class EnemyCardAnimator : MonoBehaviour
         transform.localScale = Vector3.one * startScale;
         canvasGroup.alpha = 0f;
 
-        // ⭐ Punto de control para curva izquierda → derecha
         Vector3 controlPoint = (startPos + endPos) / 2f;
-
         controlPoint.x = startPos.x - 120f;
         controlPoint.y = Mathf.Lerp(startPos.y, endPos.y, 0.5f);
 
-        // ⭐ FADE IN
+        // FADE IN
         float t = 0;
         while (t < fadeDuration)
         {
+            if (canvasGroup == null) yield break;
+
             t += Time.deltaTime;
             float p = t / fadeDuration;
             canvasGroup.alpha = p;
             yield return null;
         }
 
-        // ⭐ MOVIMIENTO EN CURVA (Bezier)
+        // MOVIMIENTO EN CURVA
         t = 0;
         while (t < moveDuration)
         {
+            if (canvasGroup == null || transform == null) yield break;
+
             t += Time.deltaTime;
             float p = Mathf.SmoothStep(0, 1, t / moveDuration);
 
@@ -56,20 +61,20 @@ public class EnemyCardAnimator : MonoBehaviour
 
             transform.position = pos;
 
-            // ⭐ Escala dinámica
             float scale = Mathf.Lerp(startScale, endScale, p);
             transform.localScale = Vector3.one * scale;
 
             yield return null;
         }
 
-        // ⭐ Espera un momento
         yield return new WaitForSeconds(0.4f);
 
-        // ⭐ FADE OUT + SCALE OUT
+        // FADE OUT
         t = 0;
         while (t < fadeDuration)
         {
+            if (canvasGroup == null || transform == null) yield break;
+
             t += Time.deltaTime;
             float p = t / fadeDuration;
 
@@ -79,9 +84,10 @@ public class EnemyCardAnimator : MonoBehaviour
             yield return null;
         }
 
-        Destroy(gameObject);
+        Destroy(gameObject, 0.05f);
     }
 }
+
 
 
 

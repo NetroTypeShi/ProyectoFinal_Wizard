@@ -276,7 +276,6 @@ GameObject:
   - component: {fileID: 468627438}
   - component: {fileID: 468627437}
   - component: {fileID: 468627439}
-  - component: {fileID: 468627440}
   m_Layer: 0
   m_Name: Manager spawn
   m_TagString: Untagged
@@ -327,22 +326,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneIntroTransition
   panelTransicion: {fileID: 1967177419}
   duracionFade: 3
---- !u!114 &468627440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 468627436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0ab3b7a4c022e240b8f37e352a4e2a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerExperience
-  level: 1
-  currentExp: 0
-  expToNextLevel: 20
-  expGrowthMultiplier: 1.25
 --- !u!1 &650275280
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,7 +380,6 @@ MonoBehaviour:
   fillImage: {fileID: 822375892}
   levelText: {fileID: 1663275500}
   expText: {fileID: 939975848}
-  fillSpeed: 0.5
 --- !u!1 &703503263
 GameObject:
   m_ObjectHideFlags: 0

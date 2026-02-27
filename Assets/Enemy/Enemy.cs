@@ -2,7 +2,6 @@
 using UnityEngine.AI;
 using System.Collections;
 
-
 public class Enemy : MonoBehaviour
 {
     [Header("Datos del enemigo (ScriptableObject)")]
@@ -13,7 +12,7 @@ public class Enemy : MonoBehaviour
     public ElementType tipoEnemigo;   // Se rellena desde stats
 
     [Header("UI del enemigo")]
-    public GameObject uiPrefab;                 // Prefab del Canvas World Space
+    public GameObject uiPrefab;
     private GameObject uiInstance;
     private UnityEngine.UI.Image tipoIcono;
     private TMPro.TextMeshProUGUI nombreTexto;
@@ -49,6 +48,9 @@ public class Enemy : MonoBehaviour
 
     private bool inBattle = false;
 
+    // ⭐ PROPIEDAD PARA ACCEDER A LA EXP DEL SCRIPTABLEOBJECT
+    public int ExpReward => stats.expReward;
+
     private void Awake()
     {
         if (stats != null && health != null)
@@ -65,6 +67,7 @@ public class Enemy : MonoBehaviour
             Debug.LogError("EnemyStats o HealthComponent no asignados en " + name);
         }
     }
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -82,7 +85,6 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                // ⭐ Ahora la corrutina la ejecuta el RespawnManager
                 RespawnManager.instance.StartRespawn(gameObject);
             }
 
@@ -111,7 +113,6 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-
 
     void Update()
     {
@@ -230,5 +231,6 @@ public class Enemy : MonoBehaviour
         return navHit.position;
     }
 }
+
 
 

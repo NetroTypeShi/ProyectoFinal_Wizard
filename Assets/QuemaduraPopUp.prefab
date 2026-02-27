@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4437011103324864038}
   - component: {fileID: 6141337337011660713}
   m_Layer: 5
-  m_Name: DamagePopup
+  m_Name: QuemaduraPopUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,8 +93,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

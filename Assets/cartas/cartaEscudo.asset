@@ -18,6 +18,10 @@ MonoBehaviour:
   damage: 0
   healAmount: 0
   defensePercent: 0.4
+  shieldTurns: 3
   type: 1
   tipo: 5
-  failChance: 10
+  failChance: 5
+  aplicaQuemadura: 0
+  "quemaduraDa\xF1o": 5
+  quemaduraTurnos: 3

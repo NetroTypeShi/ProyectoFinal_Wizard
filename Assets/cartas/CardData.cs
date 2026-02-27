@@ -37,7 +37,13 @@ public class CardData : ScriptableObject
     [Header("Probabilidad de fallo")]
     [Range(0, 100)]
     public int failChance = 0;
+
+    [Header("Efectos de estado")]
+    public bool aplicaQuemadura = false;
+    public int quemaduraDaño = 5;
+    public int quemaduraTurnos = 3;
 }
+
 
 
 

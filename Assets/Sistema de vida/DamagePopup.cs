@@ -12,14 +12,21 @@ public class DamagePopup : MonoBehaviour
     private void Awake()
     {
         text = GetComponent<TextMeshProUGUI>();
+
         color = text.color;
         color.a = 1f;
         text.color = color;
     }
 
-    // ⭐ NUEVO: tipo de popup
-    public void Setup(int amount, bool esCuracion)
+    public void Setup(int amount, bool esCuracion, bool esQuemadura)
     {
+        if (esQuemadura)
+        {
+            text.text = "-" + amount;
+            text.color = new Color(1f, 0.4f, 0f); // naranja fuego
+            return;
+        }
+
         if (esCuracion)
         {
             text.text = "+" + amount;
@@ -44,6 +51,9 @@ public class DamagePopup : MonoBehaviour
             Destroy(gameObject);
     }
 }
+
+
+
 
 
 

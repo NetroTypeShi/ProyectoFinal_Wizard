@@ -13,5 +13,8 @@ public class EnemyStats : ScriptableObject
     public ElementType tipoEnemigo;
 
     [Header("Mazo del enemigo")]
-    public List<CardData> mazoBase;   // ⭐ AÑADIDO
+    public List<CardData> mazoBase;
+
+    [Header("Recompensas")]
+    public int expReward = 10;   // ⭐ EXP que da este enemigo
 }

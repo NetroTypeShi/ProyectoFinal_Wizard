@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83b320b55f2157445be5db7304540e2c, type: 3}
-  m_Name: cartaVida
+  m_Name: quemadura
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardName: vida
+  cardName: quemadura
   artwork: {fileID: 0}
   manaCost: 10
   damage: 0
-  healAmount: 100
+  healAmount: 0
   defensePercent: 0.4
   shieldTurns: 3
-  type: 2
-  tipo: 4
-  failChance: 5
-  aplicaQuemadura: 0
-  "quemaduraDa\xF1o": 5
+  type: 0
+  tipo: 0
+  failChance: 10
+  aplicaQuemadura: 1
+  "quemaduraDa\xF1o": 20
   quemaduraTurnos: 3
