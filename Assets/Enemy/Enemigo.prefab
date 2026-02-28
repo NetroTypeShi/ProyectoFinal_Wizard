@@ -261,10 +261,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d93f056cbbf04449a34b002ccd7763e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBattleStarter
+  dataCarrier: {fileID: 11400000, guid: fe9290fbf899eed4195499a08a419e02, type: 2}
+  battleSceneName: BattleScene
   detectionDistance: 6
   engageDistance: 1.5
   maxChaseDistance: 10
-  battleSceneName: BattleScene
   patrolSpeed: 2
   chaseSpeed: 5
   alertIconPrefab: {fileID: 0}

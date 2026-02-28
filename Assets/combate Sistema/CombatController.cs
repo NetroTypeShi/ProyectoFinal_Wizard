@@ -9,6 +9,10 @@ public class CombatController : MonoBehaviour
     [Header("ScriptableObject que trae los datos del enemigo")]
     public EnemyDataCarrier dataCarrier;
 
+    [Header("Spawn Points")]
+    public Transform enemySpawnPoint;
+    public Transform playerSpawnPoint;
+
     [Header("Barras de vida")]
     public HealthBarUI playerHealthBar;
     public HealthBarUI enemyHealthBar;
@@ -101,26 +105,19 @@ public class CombatController : MonoBehaviour
 
     private void InstanciarEnemigoDesdeSO()
     {
-        enemigoInstanciado = Instantiate(dataCarrier.stats.battlePrefab);
+        enemigoInstanciado = Instantiate(
+            dataCarrier.stats.battlePrefab,
+            enemySpawnPoint.position,
+            enemySpawnPoint.rotation
+        );
+
         enemigo = enemigoInstanciado.GetComponent<Enemy>();
         enemigoHealth = enemigoInstanciado.GetComponent<HealthComponent>();
 
         enemigo.stats = dataCarrier.stats;
 
-        // ⭐ VIDA COMPLETA ANTES DE EVENTOS
         enemigoHealth.maxHealth = dataCarrier.stats.maxHealth;
         enemigoHealth.currentHealth = dataCarrier.stats.maxHealth;
-
-        // ⭐ Asignar barra del enemigo
-        enemyHealthBar.SetTarget(enemigoHealth);
-
-        // Avisar a la UI
-        GameEvents.OnLifeChanged.Invoke(enemigoHealth);
-
-        enemigo.tipoEnemigo = dataCarrier.stats.tipoEnemigo;
-
-        enemyDeck.enemyStats = dataCarrier.stats;
-        enemyDeck.ReiniciarMazo();
 
         StatusEffects enemyStatus = enemigoHealth.GetComponent<StatusEffects>();
         if (enemyStatus != null)
@@ -128,6 +125,14 @@ public class CombatController : MonoBehaviour
             enemyStatus.burnTurns = 0;
             enemyStatus.burnDamage = 0;
         }
+
+        enemyHealthBar.SetTarget(enemigoHealth);
+        GameEvents.OnLifeChanged.Invoke(enemigoHealth);
+
+        enemigo.tipoEnemigo = dataCarrier.stats.tipoEnemigo;
+
+        enemyDeck.enemyStats = dataCarrier.stats;
+        enemyDeck.ReiniciarMazo();
 
         enemigoHealth.OnDeath += EnemigoMuerto;
 
@@ -150,16 +155,26 @@ public class CombatController : MonoBehaviour
             yield return null;
         }
 
+        // ⭐ Mover jugador al spawn del combate
+        if (playerSpawnPoint != null)
+        {
+            playerObj.transform.position = playerSpawnPoint.position;
+            playerObj.transform.rotation = playerSpawnPoint.rotation;
+        }
+
         jugadorHealth = playerObj.GetComponent<HealthComponent>();
         jugadorHealth.OnDeath += JugadorMuerto;
 
-        // ⭐ VIDA COMPLETA DEL JUGADOR
         jugadorHealth.currentHealth = jugadorHealth.maxHealth;
 
-        // ⭐ Asignar barra del jugador
-        playerHealthBar.SetTarget(jugadorHealth);
+        StatusEffects playerStatus = jugadorHealth.GetComponent<StatusEffects>();
+        if (playerStatus != null)
+        {
+            playerStatus.burnTurns = 0;
+            playerStatus.burnDamage = 0;
+        }
 
-        // Avisar a la UI
+        playerHealthBar.SetTarget(jugadorHealth);
         GameEvents.OnLifeChanged.Invoke(jugadorHealth);
 
         jugadorHealth.OnHealthChanged += (vidaActual, vidaMax) =>
@@ -297,6 +312,12 @@ public class CombatController : MonoBehaviour
                 enemigoHealth.TakeDamage(burn);
                 MostrarDaño(burn, enemyBurnPoint, false, true);
                 GameEvents.OnLifeChanged.Invoke(enemigoHealth);
+
+                if (burnTickParticlesPrefab != null)
+                {
+                    GameObject fx = Instantiate(burnTickParticlesPrefab, enemyBurnPoint.position, Quaternion.identity);
+                    Destroy(fx, 3f);
+                }
             }
         }
 
@@ -347,6 +368,12 @@ public class CombatController : MonoBehaviour
                 jugadorHealth.TakeDamage(burn);
                 MostrarDaño(burn, playerBurnPoint, false, true);
                 GameEvents.OnLifeChanged.Invoke(jugadorHealth);
+
+                if (burnTickParticlesPrefab != null)
+                {
+                    GameObject fx = Instantiate(burnTickParticlesPrefab, playerBurnPoint.position, Quaternion.identity);
+                    Destroy(fx, 3f);
+                }
             }
         }
 
@@ -384,6 +411,8 @@ public class CombatController : MonoBehaviour
     private IEnumerator VolverAlMundoTrasVictoria()
     {
         yield return new WaitForSeconds(5f);
+
+        SceneManager.sceneLoaded += RestaurarPosicionJugador;
         SceneManager.LoadScene("SampleScene");
     }
 
@@ -396,7 +425,21 @@ public class CombatController : MonoBehaviour
     private IEnumerator VolverAlMundo()
     {
         yield return new WaitForSeconds(2f);
+
+        SceneManager.sceneLoaded += RestaurarPosicionJugador;
         SceneManager.LoadScene("SampleScene");
+    }
+
+    private void RestaurarPosicionJugador(Scene scene, LoadSceneMode mode)
+    {
+        if (PlayerPositionMemory.hasSavedPosition)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            player.transform.position = PlayerPositionMemory.lastPosition;
+            player.transform.rotation = PlayerPositionMemory.lastRotation;
+        }
+
+        SceneManager.sceneLoaded -= RestaurarPosicionJugador;
     }
 
     private void SetCartasAlpha(float target)
@@ -482,3 +525,5 @@ public class CombatController : MonoBehaviour
         }
     }
 }
+
+

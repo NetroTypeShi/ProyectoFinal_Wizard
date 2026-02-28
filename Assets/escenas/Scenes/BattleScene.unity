@@ -2741,7 +2741,7 @@ PrefabInstance:
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: enemyBurnPoint
       value: 
-      objectReference: {fileID: 908809018}
+      objectReference: {fileID: 1185020050}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: enemyHealthBar
       value: 
@@ -2755,13 +2755,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6184981156784672560, guid: 4f44408f9d4d1d645944f5558dbc51dd, type: 3}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: enemySpawnPoint
+      value: 
+      objectReference: {fileID: 1185020050}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: escalaBaseCarta
       value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: playerBurnPoint
       value: 
-      objectReference: {fileID: 1012241223}
+      objectReference: {fileID: 13530110}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: playerHealthBar
       value: 
@@ -2774,6 +2778,10 @@ PrefabInstance:
       propertyPath: enemyDamagePoint
       value: 
       objectReference: {fileID: 615333263}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: playerSpawnPoint
+      value: 
+      objectReference: {fileID: 13530110}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: cartaVisualPrefab
       value: 

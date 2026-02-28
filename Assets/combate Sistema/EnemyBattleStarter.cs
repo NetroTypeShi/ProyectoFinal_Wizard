@@ -89,10 +89,12 @@ public class EnemyBattleStarter : MonoBehaviour
         // ⭐ Guardar SOLO el ScriptableObject del enemigo
         dataCarrier.stats = e.stats;
 
-        // ❌ NO guardar vida
-        // ❌ NO tocar vida
-        // ❌ NO tocar estados
+        // ⭐ GUARDAR POSICIÓN EXACTA DEL JUGADOR ANTES DEL COMBATE
+        PlayerPositionMemory.lastPosition = player.position;
+        PlayerPositionMemory.lastRotation = player.rotation;
+        PlayerPositionMemory.hasSavedPosition = true;
 
+        // ⭐ Cambiar de escena con fade
         SceneFader fader = FindFirstObjectByType<SceneFader>();
         fader.FadeToScene(battleSceneName);
     }
@@ -107,5 +109,6 @@ public class EnemyBattleStarter : MonoBehaviour
         Destroy(icon);
     }
 }
+
 
 
