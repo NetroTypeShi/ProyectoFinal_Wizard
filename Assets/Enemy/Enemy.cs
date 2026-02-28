@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
     public HealthComponent health;
 
     [Header("Tipo elemental del enemigo")]
-    public ElementType tipoEnemigo;   // Se rellena desde stats
+    public ElementType tipoEnemigo;
 
     [Header("UI del enemigo")]
     public GameObject uiPrefab;
@@ -48,18 +48,15 @@ public class Enemy : MonoBehaviour
 
     private bool inBattle = false;
 
-    // ⭐ PROPIEDAD PARA ACCEDER A LA EXP DEL SCRIPTABLEOBJECT
     public int ExpReward => stats.expReward;
 
     private void Awake()
     {
         if (stats != null && health != null)
         {
-            // Vida
             health.maxHealth = stats.maxHealth;
             health.currentHealth = stats.maxHealth;
 
-            // Tipo elemental desde ScriptableObject
             tipoEnemigo = stats.tipoEnemigo;
         }
         else
@@ -74,24 +71,6 @@ public class Enemy : MonoBehaviour
         originPos = transform.position;
         wanderTimer = wanderInterval;
 
-        if (EnemyStateManager.enemyDead)
-        {
-            gameObject.SetActive(false);
-
-            if (Time.time >= EnemyStateManager.respawnTime)
-            {
-                EnemyStateManager.enemyDead = false;
-                gameObject.SetActive(true);
-            }
-            else
-            {
-                RespawnManager.instance.StartRespawn(gameObject);
-            }
-
-            return;
-        }
-
-        // Instanciar UI (solo si está vivo)
         if (uiPrefab != null)
         {
             uiInstance = Instantiate(uiPrefab, transform);
@@ -231,6 +210,7 @@ public class Enemy : MonoBehaviour
         return navHit.position;
     }
 }
+
 
 
 

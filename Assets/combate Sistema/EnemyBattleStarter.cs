@@ -5,17 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class EnemyBattleStarter : MonoBehaviour
 {
-    [Header("Detección y combate")]
+    public EnemyDataCarrier dataCarrier;
+    public string battleSceneName = "BattleScene";
+
     public float detectionDistance = 6f;
     public float engageDistance = 1.5f;
     public float maxChaseDistance = 10f;
-    public string battleSceneName = "BattleScene";
 
-    [Header("Velocidades")]
     public float patrolSpeed = 2f;
     public float chaseSpeed = 5f;
 
-    [Header("Exclamación")]
     public GameObject alertIconPrefab;
     public float alertDuration = 0.6f;
 
@@ -55,21 +54,18 @@ public class EnemyBattleStarter : MonoBehaviour
                     StartCoroutine(ShowAlertIcon());
                 }
             }
-            else
-                return;
+            else return;
         }
 
         agent.SetDestination(player.position);
 
-        float chaseDistance = Vector3.Distance(transform.position, player.position);
-        if (chaseDistance > maxChaseDistance)
+        if (Vector3.Distance(transform.position, player.position) > maxChaseDistance)
         {
             StopChasing();
             return;
         }
 
-        float dist = Vector3.Distance(transform.position, player.position);
-        if (dist <= engageDistance && chasing)
+        if (Vector3.Distance(transform.position, player.position) <= engageDistance)
         {
             StartBattle();
         }
@@ -80,18 +76,22 @@ public class EnemyBattleStarter : MonoBehaviour
         chasing = false;
         alertShown = false;
         agent.speed = patrolSpeed;
-
         agent.SetDestination(originalPosition);
     }
 
     private void StartBattle()
     {
         agent.isStopped = true;
-
         playerMovement.enabled = false;
 
-        // Guardamos este enemigo para la escena de combate
-        EnemyStateManager.enemigoSeleccionado = this.gameObject;
+        Enemy e = GetComponent<Enemy>();
+
+        // ⭐ Guardar SOLO el ScriptableObject del enemigo
+        dataCarrier.stats = e.stats;
+
+        // ❌ NO guardar vida
+        // ❌ NO tocar vida
+        // ❌ NO tocar estados
 
         SceneFader fader = FindFirstObjectByType<SceneFader>();
         fader.FadeToScene(battleSceneName);
@@ -107,3 +107,5 @@ public class EnemyBattleStarter : MonoBehaviour
         Destroy(icon);
     }
 }
+
+

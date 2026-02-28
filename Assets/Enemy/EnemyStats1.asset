@@ -24,3 +24,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b71f3bf17b163e8458da97cb9560efb4, type: 2}
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
   expReward: 100000
+  battlePrefab: {fileID: 1800938087721747053, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}

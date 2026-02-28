@@ -275,11 +275,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2694b995b9d9b784c8d395f187272adb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
-  targetTag: Enemy
   fillImage: {fileID: 113844614}
   lifeText: {fileID: 290290049}
-  shakeDuration: 0.15
-  shakeMagnitude: 10
 --- !u!114 &113844614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,7 +503,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 101.11011, y: 230}
+  m_AnchoredPosition: {x: 101.11035, y: 230}
   m_SizeDelta: {x: 500, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &248145652
@@ -2710,6 +2707,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1243298628}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: dataCarrier
+      value: 
+      objectReference: {fileID: 11400000, guid: fe9290fbf899eed4195499a08a419e02, type: 2}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: deathScreen
       value: 
       objectReference: {fileID: 784802913}
@@ -2742,6 +2743,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 908809018}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: enemyHealthBar
+      value: 
+      objectReference: {fileID: 113844613}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: levantamientoY
       value: 50
       objectReference: {fileID: 0}
@@ -2757,6 +2762,10 @@ PrefabInstance:
       propertyPath: playerBurnPoint
       value: 
       objectReference: {fileID: 1012241223}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: playerHealthBar
+      value: 
+      objectReference: {fileID: 1741119766}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: cartasSpawnPoint
       value: 
@@ -2944,7 +2953,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 183.79999, y: -328.2}
+  m_AnchoredPosition: {x: 183.7998, y: -328.19995}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1476250174
@@ -3521,11 +3530,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2694b995b9d9b784c8d395f187272adb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
-  targetTag: Player
   fillImage: {fileID: 1741119767}
   lifeText: {fileID: 1208970107}
-  shakeDuration: 0.15
-  shakeMagnitude: 10
 --- !u!114 &1741119767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3671,7 +3677,6 @@ MonoBehaviour:
   playerBattlePos: {fileID: 13530110}
   enemyBattlePos: {fileID: 1185020050}
   playerPrefab: {fileID: 1748273868546826069, guid: dc06c403fc48cf34e9ba02043880b738, type: 3}
-  enemyPrefab: {fileID: 1800938087721747053, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
 --- !u!4 &1771455054
 Transform:
   m_ObjectHideFlags: 0

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public static class EnemyStateManager
 {
     public static bool enemyDead = false;

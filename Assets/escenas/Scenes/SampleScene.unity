@@ -2022,6 +2022,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8680832497237678005, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
+      propertyPath: dataCarrier
+      value: 
+      objectReference: {fileID: 11400000, guid: fe9290fbf899eed4195499a08a419e02, type: 2}
+    - target: {fileID: 8680832497237678005, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
       propertyPath: alertIconPrefab
       value: 
       objectReference: {fileID: 784943664356881892, guid: b2e057f9c821a914c95ef79e3a673e56, type: 3}
@@ -2191,6 +2195,10 @@ PrefabInstance:
       propertyPath: chaseSpeed
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 8680832497237678005, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
+      propertyPath: dataCarrier
+      value: 
+      objectReference: {fileID: 11400000, guid: fe9290fbf899eed4195499a08a419e02, type: 2}
     - target: {fileID: 8680832497237678005, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
       propertyPath: alertIconPrefab
       value: 

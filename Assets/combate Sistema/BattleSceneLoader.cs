@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class BattleSceneLoader : MonoBehaviour
@@ -7,7 +7,6 @@ public class BattleSceneLoader : MonoBehaviour
     public Transform enemyBattlePos;
 
     public GameObject playerPrefab;
-    public GameObject enemyPrefab;
 
     private IEnumerator Start()
     {
@@ -25,16 +24,12 @@ public class BattleSceneLoader : MonoBehaviour
             hp = player.GetComponent<HealthComponent>();
         }
 
-        // Instanciar enemigo
-        GameObject enemy = Instantiate(enemyPrefab, enemyBattlePos.position, enemyBattlePos.rotation);
-
-        // Buscar CombatController con la nueva API
-        CombatController combat = FindFirstObjectByType<CombatController>();
-
-        // Iniciar combate AHORA que el jugador ya est� vivo
-        combat.IniciarCombate(enemy);
+        // ❌ NO instanciar enemigo aquí
+        // CombatController se encarga de instanciar al enemigo correcto desde EnemyDataCarrier
     }
 }
+
+
 
 
 

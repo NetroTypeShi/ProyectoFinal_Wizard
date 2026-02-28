@@ -6,6 +6,13 @@ using TMPro;
 
 public class CombatController : MonoBehaviour
 {
+    [Header("ScriptableObject que trae los datos del enemigo")]
+    public EnemyDataCarrier dataCarrier;
+
+    [Header("Barras de vida")]
+    public HealthBarUI playerHealthBar;
+    public HealthBarUI enemyHealthBar;
+
     [Header("Stats")]
     public HealthComponent jugadorHealth;
     public HealthComponent enemigoHealth;
@@ -52,7 +59,7 @@ public class CombatController : MonoBehaviour
 
     [Header("Damage Popup")]
     public GameObject damagePopupPrefab;
-    public GameObject burnPopupPrefab;   //  PREFAB DE QUEMADURA
+    public GameObject burnPopupPrefab;
     public Canvas canvas;
 
     [Header("Damage Popup Targets")]
@@ -73,7 +80,7 @@ public class CombatController : MonoBehaviour
     [Header("Efectos de quemadura")]
     public GameObject burnTickParticlesPrefab;
 
-    private GameObject enemigoDelMundo;
+    private GameObject enemigoInstanciado;
     private Coroutine fadeRoutine;
 
     private List<GameObject> cartasInstanciadas = new List<GameObject>();
@@ -83,21 +90,54 @@ public class CombatController : MonoBehaviour
     private void Start()
     {
         maxMana = JugadorMana;
+
         StartCoroutine(EsperarPlayer());
+        InstanciarEnemigoDesdeSO();
+
+        if (failText != null) failText.gameObject.SetActive(false);
+        if (victoryText != null) victoryText.gameObject.SetActive(false);
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+    }
+
+    private void InstanciarEnemigoDesdeSO()
+    {
+        enemigoInstanciado = Instantiate(dataCarrier.stats.battlePrefab);
+        enemigo = enemigoInstanciado.GetComponent<Enemy>();
+        enemigoHealth = enemigoInstanciado.GetComponent<HealthComponent>();
+
+        enemigo.stats = dataCarrier.stats;
+
+        // ⭐ VIDA COMPLETA ANTES DE EVENTOS
+        enemigoHealth.maxHealth = dataCarrier.stats.maxHealth;
+        enemigoHealth.currentHealth = dataCarrier.stats.maxHealth;
+
+        // ⭐ Asignar barra del enemigo
+        enemyHealthBar.SetTarget(enemigoHealth);
+
+        // Avisar a la UI
+        GameEvents.OnLifeChanged.Invoke(enemigoHealth);
+
+        enemigo.tipoEnemigo = dataCarrier.stats.tipoEnemigo;
+
+        enemyDeck.enemyStats = dataCarrier.stats;
+        enemyDeck.ReiniciarMazo();
+
+        StatusEffects enemyStatus = enemigoHealth.GetComponent<StatusEffects>();
+        if (enemyStatus != null)
+        {
+            enemyStatus.burnTurns = 0;
+            enemyStatus.burnDamage = 0;
+        }
+
+        enemigoHealth.OnDeath += EnemigoMuerto;
+
+        MostrarMano();
+        esperandoSeleccion = true;
 
         GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
         GameEvents.OnTurnChanged.Invoke(true);
 
         SetCartasAlpha(1f);
-
-        if (failText != null)
-            failText.gameObject.SetActive(false);
-
-        if (victoryText != null)
-            victoryText.gameObject.SetActive(false);
-
-        if (victoryPanel != null)
-            victoryPanel.SetActive(false);
     }
 
     private IEnumerator EsperarPlayer()
@@ -113,12 +153,19 @@ public class CombatController : MonoBehaviour
         jugadorHealth = playerObj.GetComponent<HealthComponent>();
         jugadorHealth.OnDeath += JugadorMuerto;
 
+        // ⭐ VIDA COMPLETA DEL JUGADOR
+        jugadorHealth.currentHealth = jugadorHealth.maxHealth;
+
+        // ⭐ Asignar barra del jugador
+        playerHealthBar.SetTarget(jugadorHealth);
+
+        // Avisar a la UI
+        GameEvents.OnLifeChanged.Invoke(jugadorHealth);
+
         jugadorHealth.OnHealthChanged += (vidaActual, vidaMax) =>
         {
             GameEvents.OnLifeChanged.Invoke(jugadorHealth);
         };
-
-        GameEvents.OnLifeChanged.Invoke(jugadorHealth);
 
         MostrarMano();
         esperandoSeleccion = true;
@@ -145,35 +192,6 @@ public class CombatController : MonoBehaviour
         {
             SeleccionarCarta(currentIndex);
         }
-    }
-
-    public void IniciarCombate(GameObject enemigoGO) 
-    {
-        enemigoDelMundo = enemigoGO; 
-        enemigo = enemigoGO.GetComponent<Enemy>();
-        enemigoHealth = enemigoGO.GetComponent<HealthComponent>();
-        enemigoHealth.OnDeath += EnemigoMuerto;
-        enemigoHealth.OnHealthChanged += (vidaActual, vidaMax) => 
-        { 
-            GameEvents.OnLifeChanged.Invoke(enemigoHealth); 
-        };
-        GameEvents.OnLifeChanged.Invoke(enemigoHealth);
-        StatusEffects playerStatus = jugadorHealth.GetComponent<StatusEffects>();
-        if (playerStatus != null) 
-        {
-            playerStatus.burnTurns = 0; playerStatus.burnDamage = 0;
-        }
-        StatusEffects enemyStatus = enemigoHealth.GetComponent<StatusEffects>(); 
-        if (enemyStatus != null) 
-        {
-            enemyStatus.burnTurns = 0;
-            enemyStatus.burnDamage = 0; 
-        } 
-        MostrarMano(); 
-        esperandoSeleccion = true;
-        GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
-        GameEvents.OnTurnChanged.Invoke(true);
-        SetCartasAlpha(1f);
     }
 
     private void MostrarMano()
@@ -208,15 +226,9 @@ public class CombatController : MonoBehaviour
             var cartaGO = cartasInstanciadas[i];
 
             if (i == currentIndex)
-            {
-                cartaGO.transform.localPosition =
-                    new Vector3(i * separacion, levantamientoY, 0);
-            }
+                cartaGO.transform.localPosition = new Vector3(i * separacion, levantamientoY, 0);
             else
-            {
-                cartaGO.transform.localPosition =
-                    new Vector3(i * separacion, 0, 0);
-            }
+                cartaGO.transform.localPosition = new Vector3(i * separacion, 0, 0);
         }
     }
 
@@ -270,9 +282,7 @@ public class CombatController : MonoBehaviour
     private void TurnoEnemigo()
     {
         GameEvents.OnTurnChanged.Invoke(false);
-
         SetCartasAlpha(0f);
-
         StartCoroutine(TurnoEnemigoCoroutine());
     }
 
@@ -285,16 +295,8 @@ public class CombatController : MonoBehaviour
             if (burn > 0)
             {
                 enemigoHealth.TakeDamage(burn);
-
                 MostrarDaño(burn, enemyBurnPoint, false, true);
-
                 GameEvents.OnLifeChanged.Invoke(enemigoHealth);
-
-                if (burnTickParticlesPrefab != null)
-                {
-                    GameObject fx = Instantiate(burnTickParticlesPrefab, enemigoHealth.transform.position, Quaternion.identity);
-                    Destroy(fx, 1f);
-                }
             }
         }
 
@@ -343,16 +345,8 @@ public class CombatController : MonoBehaviour
             if (burn > 0)
             {
                 jugadorHealth.TakeDamage(burn);
-
                 MostrarDaño(burn, playerBurnPoint, false, true);
-
                 GameEvents.OnLifeChanged.Invoke(jugadorHealth);
-
-                if (burnTickParticlesPrefab != null)
-                {
-                    GameObject fx = Instantiate(burnTickParticlesPrefab, jugadorHealth.transform.position, Quaternion.identity);
-                    Destroy(fx, 1f);
-                }
             }
         }
 
@@ -366,16 +360,9 @@ public class CombatController : MonoBehaviour
 
     private void EnemigoMuerto()
     {
-        Debug.Log("El enemigo ha muerto");
-
-        if (combatUI != null)
-            combatUI.SetActive(false);
-
-        if (victoryPanel != null)
-            victoryPanel.SetActive(true);
-
-        if (victoryText != null)
-            victoryText.gameObject.SetActive(true);
+        if (combatUI != null) combatUI.SetActive(false);
+        if (victoryPanel != null) victoryPanel.SetActive(true);
+        if (victoryText != null) victoryText.gameObject.SetActive(true);
 
         int expGanada = enemigo.ExpReward;
         PlayerExperience.Instance.AddExperience(expGanada);
@@ -388,14 +375,8 @@ public class CombatController : MonoBehaviour
 
         VictoryCamera.Instance.MoveCameraToVictory(jugadorHealth.transform);
 
-        EnemyStateManager.enemyDead = true;
-        EnemyStateManager.respawnTime = Time.time + 10f;
-
-        if (enemigo != null)
-            Destroy(enemigo.gameObject);
-
-        if (enemigoDelMundo != null)
-            enemigoDelMundo.SetActive(false);
+        if (enemigoInstanciado != null)
+            Destroy(enemigoInstanciado);
 
         StartCoroutine(VolverAlMundoTrasVictoria());
     }
@@ -408,9 +389,7 @@ public class CombatController : MonoBehaviour
 
     private void JugadorMuerto()
     {
-        Debug.Log("Has muerto");
         deathScreen.ShowDeathScreen();
-
         StartCoroutine(VolverAlMundo());
     }
 
@@ -461,7 +440,7 @@ public class CombatController : MonoBehaviour
     {
         if (objetivo == null) return;
 
-        GameObject prefabAUsar = esQuemadura ? burnPopupPrefab : damagePopupPrefab; 
+        GameObject prefabAUsar = esQuemadura ? burnPopupPrefab : damagePopupPrefab;
 
         GameObject popup = Instantiate(prefabAUsar, canvas.transform);
 
@@ -503,4 +482,3 @@ public class CombatController : MonoBehaviour
         }
     }
 }
-
