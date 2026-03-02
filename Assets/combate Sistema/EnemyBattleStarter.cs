@@ -85,19 +85,21 @@ public class EnemyBattleStarter : MonoBehaviour
         playerMovement.enabled = false;
 
         Enemy e = GetComponent<Enemy>();
-
-        // ⭐ Guardar SOLO el ScriptableObject del enemigo
         dataCarrier.stats = e.stats;
 
-        // ⭐ GUARDAR POSICIÓN EXACTA DEL JUGADOR ANTES DEL COMBATE
+        // Guardar posición del jugador
         PlayerPositionMemory.lastPosition = player.position;
         PlayerPositionMemory.lastRotation = player.rotation;
         PlayerPositionMemory.hasSavedPosition = true;
 
-        // ⭐ Cambiar de escena con fade
+        // ⭐ DESACTIVAR respawn del checkpoint
+        CheckpointManager.instance.shouldRespawn = false;
+
+        // Cambiar de escena
         SceneFader fader = FindFirstObjectByType<SceneFader>();
         fader.FadeToScene(battleSceneName);
     }
+
 
     private IEnumerator ShowAlertIcon()
     {
@@ -108,6 +110,23 @@ public class EnemyBattleStarter : MonoBehaviour
 
         Destroy(icon);
     }
+    private void RestaurarPosicionJugador(Scene scene, LoadSceneMode mode)
+    {
+        StartCoroutine(ApplyPositionNextFrame());
+    }
+
+    private IEnumerator ApplyPositionNextFrame()
+    {
+        yield return null; // esperar 1 frame
+
+        if (PlayerPositionMemory.hasSavedPosition)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            player.transform.position = PlayerPositionMemory.lastPosition;
+            player.transform.rotation = PlayerPositionMemory.lastRotation;
+        }
+    }
+
 }
 
 

@@ -38,6 +38,11 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
+        // ⭐ NO mover al jugador si venimos de un combate
+        if (PlayerPositionMemory.hasSavedPosition)
+            return;
+
+        // Respawn normal por checkpoint
         if (CheckpointManager.instance != null &&
             CheckpointManager.instance.shouldRespawn &&
             CheckpointManager.instance.currentCheckpoint != null)
@@ -48,8 +53,6 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-
-    
 
     void Update()
     {

@@ -3,7 +3,14 @@ using UnityEngine;
 
 public class DeckManager : MonoBehaviour
 {
-    public List<CardData> mazoInicial;
+    public static DeckManager instance;
+
+    [Header("Mazo editable por el jugador (deckbuilder)")]
+    public List<CardData> mazoEditable = new List<CardData>();
+
+    [Header("Mazo usado en combate (se genera desde mazoEditable)")]
+    public List<CardData> mazoInicial = new List<CardData>();
+
     private List<CardData> mazo = new List<CardData>();
     private List<CardData> descarte = new List<CardData>();
     private List<CardData> mano = new List<CardData>();
@@ -12,7 +19,27 @@ public class DeckManager : MonoBehaviour
 
     private void Awake()
     {
+        // Evitar duplicados del singleton
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        // Crear el mazo inicial desde el editable
+        ActualizarMazoInicial();
+
+        // Preparar el mazo para el combate
         ReiniciarMazo();
+    }
+
+    public void ActualizarMazoInicial()
+    {
+        // Copiar el mazo editable al mazo inicial
+        mazoInicial = new List<CardData>(mazoEditable);
     }
 
     public void ReiniciarMazo()
@@ -21,6 +48,7 @@ public class DeckManager : MonoBehaviour
         descarte.Clear();
         mano.Clear();
 
+        // Cargar el mazo inicial
         foreach (var c in mazoInicial)
             mazo.Add(c);
 
@@ -47,6 +75,7 @@ public class DeckManager : MonoBehaviour
 
     public void RobarCarta()
     {
+        // Si el mazo está vacío, reciclar descarte
         if (mazo.Count == 0 && descarte.Count > 0)
         {
             mazo.AddRange(descarte);
@@ -54,7 +83,8 @@ public class DeckManager : MonoBehaviour
             Barajar(mazo);
         }
 
-        if (mazo.Count > 0 && mano.Count < tamañoMano) // ← IMPORTANTE
+        // Robar solo si hay espacio en la mano
+        if (mazo.Count > 0 && mano.Count < tamañoMano)
         {
             var carta = mazo[0];
             mazo.RemoveAt(0);
@@ -75,6 +105,24 @@ public class DeckManager : MonoBehaviour
 
         RobarCarta();
     }
+
+    // Funciones para el deckbuilder
+    public bool AñadirAlMazo(CardData carta, int maxSize)
+    {
+        if (mazoEditable.Count >= maxSize)
+            return false;
+
+        mazoEditable.Add(carta);
+        return true;
+    }
+
+    public void QuitarDelMazo(CardData carta)
+    {
+        mazoEditable.Remove(carta);
+    }
 }
+
+
+
 
 

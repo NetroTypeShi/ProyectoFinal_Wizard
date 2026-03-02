@@ -2639,6 +2639,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2845920055925868060, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: mazoEditable.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2845920055925868060, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: 'mazoInicial.Array.data[0]'
       value: 
       objectReference: {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
@@ -2662,6 +2666,18 @@ PrefabInstance:
       propertyPath: 'mazoInicial.Array.data[5]'
       value: 
       objectReference: {fileID: 11400000, guid: b71f3bf17b163e8458da97cb9560efb4, type: 2}
+    - target: {fileID: 2845920055925868060, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: 'mazoEditable.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+    - target: {fileID: 2845920055925868060, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: 'mazoEditable.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 4f55c310996d7cc45a337aab015cd5f7, type: 2}
+    - target: {fileID: 2845920055925868060, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: 'mazoEditable.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6693c47efe46a594b83edcda1914293c, type: 2}
     - target: {fileID: 4058457241031881833, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: m_Name
       value: CombatController
@@ -2846,7 +2862,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2845920055925868060, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

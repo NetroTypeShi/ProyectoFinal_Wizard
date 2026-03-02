@@ -35,7 +35,7 @@ public class CombatController : MonoBehaviour
     public int defensaTurnosRestantes = 0;
 
     [Header("Mazo del jugador")]
-    public DeckManager deck;
+    public DeckManager deck => DeckManager.instance;
 
     [Header("Mazo del enemigo")]
     public EnemyDeckManager enemyDeck;
@@ -95,6 +95,10 @@ public class CombatController : MonoBehaviour
     {
         maxMana = JugadorMana;
 
+        // ⭐⭐ LÍNEAS IMPORTANTES ⭐⭐
+        deck.ActualizarMazoInicial();
+        deck.ReiniciarMazo();
+
         StartCoroutine(EsperarPlayer());
         InstanciarEnemigoDesdeSO();
 
@@ -102,6 +106,7 @@ public class CombatController : MonoBehaviour
         if (victoryText != null) victoryText.gameObject.SetActive(false);
         if (victoryPanel != null) victoryPanel.SetActive(false);
     }
+
 
     private void InstanciarEnemigoDesdeSO()
     {
@@ -155,7 +160,6 @@ public class CombatController : MonoBehaviour
             yield return null;
         }
 
-        // ⭐ Mover jugador al spawn del combate
         if (playerSpawnPoint != null)
         {
             playerObj.transform.position = playerSpawnPoint.position;
@@ -525,5 +529,4 @@ public class CombatController : MonoBehaviour
         }
     }
 }
-
 
