@@ -5,6 +5,9 @@ public class DeckManager : MonoBehaviour
 {
     public static DeckManager instance;
 
+    [Header("Cartas desbloqueadas por el jugador")]
+    public List<CardData> cartasDesbloqueadas = new List<CardData>();
+
     [Header("Mazo editable por el jugador (deckbuilder)")]
     public List<CardData> mazoEditable = new List<CardData>();
 
@@ -36,9 +39,23 @@ public class DeckManager : MonoBehaviour
         ReiniciarMazo();
     }
 
+    // ---------------------------------------------------------
+    //  SISTEMA DE DESBLOQUEO DE CARTAS (ESCALABLE)
+    // ---------------------------------------------------------
+    public void DesbloquearCarta(CardData carta)
+    {
+        if (!cartasDesbloqueadas.Contains(carta))
+        {
+            cartasDesbloqueadas.Add(carta);
+            Debug.Log("Carta desbloqueada: " + carta.name);
+        }
+    }
+
+    // ---------------------------------------------------------
+    //  MAZO DE COMBATE
+    // ---------------------------------------------------------
     public void ActualizarMazoInicial()
     {
-        // Copiar el mazo editable al mazo inicial
         mazoInicial = new List<CardData>(mazoEditable);
     }
 
@@ -48,7 +65,6 @@ public class DeckManager : MonoBehaviour
         descarte.Clear();
         mano.Clear();
 
-        // Cargar el mazo inicial
         foreach (var c in mazoInicial)
             mazo.Add(c);
 
@@ -75,7 +91,6 @@ public class DeckManager : MonoBehaviour
 
     public void RobarCarta()
     {
-        // Si el mazo está vacío, reciclar descarte
         if (mazo.Count == 0 && descarte.Count > 0)
         {
             mazo.AddRange(descarte);
@@ -83,7 +98,6 @@ public class DeckManager : MonoBehaviour
             Barajar(mazo);
         }
 
-        // Robar solo si hay espacio en la mano
         if (mazo.Count > 0 && mano.Count < tamañoMano)
         {
             var carta = mazo[0];
@@ -106,8 +120,10 @@ public class DeckManager : MonoBehaviour
         RobarCarta();
     }
 
-    // Funciones para el deckbuilder
-    public bool AñadirAlMazo(CardData carta, int maxSize)
+    // ---------------------------------------------------------
+    //  DECKBUILDER (LÍMITE DE 5 CARTAS)
+    // ---------------------------------------------------------
+    public bool AñadirAlMazo(CardData carta, int maxSize = 5)
     {
         if (mazoEditable.Count >= maxSize)
             return false;
@@ -121,6 +137,7 @@ public class DeckManager : MonoBehaviour
         mazoEditable.Remove(carta);
     }
 }
+
 
 
 

@@ -12,7 +12,7 @@ public class DeckBuilderUI : MonoBehaviour
     public GameObject cartaVisualPrefab;
 
     [Header("Límites")]
-    public int maxDeckSize = 10;
+    public int maxDeckSize = 5;
 
     [Header("Panel principal del deckbuilder")]
     public GameObject deckBuilderPanel;
@@ -25,7 +25,7 @@ public class DeckBuilderUI : MonoBehaviour
 
         if (deckManager == null)
         {
-            Debug.LogError("❌ DeckManager no existe. Asegúrate de cargar la escena inicial primero.");
+            Debug.LogError("❌ DeckManager no existe.");
             return;
         }
 
@@ -41,21 +41,18 @@ public class DeckBuilderUI : MonoBehaviour
         foreach (Transform t in deckPanel)
             Destroy(t.gameObject);
 
-        // Instanciar cartas del inventario (todas las desbloqueadas)
+        // ⭐ 1. CARTAS BASE DEL JUGADOR
         foreach (var card in cardCollection.unlockedCards)
+            CrearCartaEnInventario(card);
+
+        // ⭐ 2. CARTAS DESBLOQUEADAS EN EL MUNDO
+        foreach (var card in deckManager.cartasDesbloqueadas)
         {
-            GameObject go = Instantiate(cartaVisualPrefab, inventoryPanel);
-            AjustarRectTransform(go);
-
-            CartaVisual visual = go.GetComponent<CartaVisual>();
-            visual.isFaceDown = false;
-            visual.Configurar(card);
-
-            // Añadir lógica de añadir al mazo
-            go.AddComponent<DeckBuilderCardButton>().Init(card, this, true);
+            if (!cardCollection.unlockedCards.Contains(card))
+                CrearCartaEnInventario(card);
         }
 
-        // Instanciar cartas del mazo editable
+        // ⭐ 3. MAZO EDITABLE
         foreach (var card in deckManager.mazoEditable)
         {
             GameObject go = Instantiate(cartaVisualPrefab, deckPanel);
@@ -65,27 +62,38 @@ public class DeckBuilderUI : MonoBehaviour
             visual.isFaceDown = false;
             visual.Configurar(card);
 
-            // Añadir lógica de quitar del mazo
             go.AddComponent<DeckBuilderCardButton>().Init(card, this, false);
         }
     }
 
-    // 🔥 Ajusta la carta para que SIEMPRE se vea en UI
+    private void CrearCartaEnInventario(CardData card)
+    {
+        GameObject go = Instantiate(cartaVisualPrefab, inventoryPanel);
+        AjustarRectTransform(go);
+
+        CartaVisual visual = go.GetComponent<CartaVisual>();
+        visual.isFaceDown = false;
+        visual.Configurar(card);
+
+        go.AddComponent<DeckBuilderCardButton>().Init(card, this, true);
+    }
+
     private void AjustarRectTransform(GameObject go)
     {
         RectTransform rt = go.GetComponent<RectTransform>();
 
         rt.localScale = Vector3.one;
         rt.localRotation = Quaternion.identity;
-
-        // MUY IMPORTANTE: Z = 0 para que se renderice en UI
         rt.anchoredPosition3D = new Vector3(rt.anchoredPosition.x, rt.anchoredPosition.y, 0);
     }
 
     public void AddCard(CardData card)
     {
         if (deckManager.mazoEditable.Count >= maxDeckSize)
+        {
+            Debug.Log("❌ Mazo lleno");
             return;
+        }
 
         deckManager.mazoEditable.Add(card);
         RefreshUI();
@@ -103,6 +111,7 @@ public class DeckBuilderUI : MonoBehaviour
         Time.timeScale = 1f;
     }
 }
+
 
 
 
