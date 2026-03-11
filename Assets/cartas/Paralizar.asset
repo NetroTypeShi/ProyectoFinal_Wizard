@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83b320b55f2157445be5db7304540e2c, type: 3}
-  m_Name: quemadura
+  m_Name: Paralizar
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardName: quemadura
+  cardName: paralizar
   artwork: {fileID: 0}
   manaCost: 10
   damage: 0
@@ -20,12 +20,12 @@ MonoBehaviour:
   defensePercent: 0.4
   shieldTurns: 3
   type: 0
-  tipo: 0
+  tipo: 2
   failChance: 10
-  aplicaQuemadura: 1
-  "quemaduraDa\xF1o": 20
+  aplicaQuemadura: 0
+  "quemaduraDa\xF1o": 5
   quemaduraTurnos: 3
-  aplicaParalisis: 0
-  paralisisApplyChance: 80
+  aplicaParalisis: 1
+  paralisisApplyChance: 100
   paralisisTurnos: 4
-  paralisisParticles: {fileID: 0}
+  paralisisParticles: {fileID: 7131401307255788800, guid: 4d9a3b35b3bc07649b697df7fb497b6d, type: 3}

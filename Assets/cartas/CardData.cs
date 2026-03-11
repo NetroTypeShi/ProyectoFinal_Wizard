@@ -34,15 +34,29 @@ public class CardData : ScriptableObject
     [Header("Tipo elemental")]
     public ElementType tipo;
 
-    [Header("Probabilidad de fallo")]
+    [Header("Probabilidad de fallo de la carta")]
     [Range(0, 100)]
     public int failChance = 0;
 
-    [Header("Efectos de estado")]
+    [Header("Efectos de estado: Quemadura")]
     public bool aplicaQuemadura = false;
     public int quemaduraDaño = 5;
     public int quemaduraTurnos = 3;
+
+    [Header("Efectos de estado: Parálisis")]
+    public bool aplicaParalisis = false;
+
+    [Tooltip("Probabilidad de aplicar parálisis si la carta acierta")]
+    [Range(0, 100)]
+    public int paralisisApplyChance = 80;
+
+    [Tooltip("Cuántos turnos dura la parálisis")]
+    public int paralisisTurnos = 4;
+
+    [Header("Partículas de parálisis")]
+    public GameObject paralisisParticles;
 }
+
 
 
 

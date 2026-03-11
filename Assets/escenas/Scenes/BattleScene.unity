@@ -277,6 +277,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
   fillImage: {fileID: 113844614}
   lifeText: {fileID: 290290049}
+  normalMaterial: {fileID: 2100000, guid: 32fac6e45890e9d48961b3db7c93c0be, type: 2}
+  paralizadoMaterial: {fileID: 2100000, guid: c56e28e54cac24b04ae3dd957d214534, type: 2}
 --- !u!114 &113844614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3557,6 +3559,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
   fillImage: {fileID: 1741119767}
   lifeText: {fileID: 1208970107}
+  normalMaterial: {fileID: 2100000, guid: 32fac6e45890e9d48961b3db7c93c0be, type: 2}
+  paralizadoMaterial: {fileID: 2100000, guid: c56e28e54cac24b04ae3dd957d214534, type: 2}
 --- !u!114 &1741119767
 MonoBehaviour:
   m_ObjectHideFlags: 0

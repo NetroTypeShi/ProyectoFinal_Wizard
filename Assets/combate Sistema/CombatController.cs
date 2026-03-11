@@ -6,7 +6,7 @@ using TMPro;
 
 public class CombatController : MonoBehaviour
 {
-    [Header("ScriptableObject que trae los datos del enemigo")]
+    [Header("Datos del enemigo")]
     public EnemyDataCarrier dataCarrier;
 
     [Header("Spawn Points")]
@@ -70,45 +70,45 @@ public class CombatController : MonoBehaviour
     public Transform enemyDamagePoint;
     public Transform playerDamagePoint;
 
-    [Header("🔥 NUEVOS: puntos de quemadura")]
+    [Header("Puntos de quemadura")]
     public Transform enemyBurnPoint;
     public Transform playerBurnPoint;
 
-    [Header("Shield Orbit")]
+    [Header("Escudo")]
     public GameObject shieldOrbitPrefab;
     private GameObject shieldActivo;
 
-    [Header("Efectos de curación")]
+    [Header("Partículas")]
     public GameObject healParticlesPrefab;
-
-    [Header("Efectos de quemadura")]
     public GameObject burnTickParticlesPrefab;
+
+    [Header("Tutorial")]
+    public TutorialManager tutorialManager;
 
     private GameObject enemigoInstanciado;
     private Coroutine fadeRoutine;
-
     private List<GameObject> cartasInstanciadas = new List<GameObject>();
     private int currentIndex = 0;
-    private bool esperandoSeleccion = false;
+    public bool esperandoSeleccion = false;
+    private bool paralizadoActivo = false;
+    private string cartaPermitida = null;
 
     private void Start()
     {
         maxMana = JugadorMana;
 
-        // ⭐⭐ LÍNEAS IMPORTANTES ⭐⭐
         deck.ActualizarMazoInicial();
         deck.ReiniciarMazo();
 
         StartCoroutine(EsperarPlayer());
-        InstanciarEnemigoDesdeSO();
+        InstanciarEnemigo();
 
         if (failText != null) failText.gameObject.SetActive(false);
         if (victoryText != null) victoryText.gameObject.SetActive(false);
         if (victoryPanel != null) victoryPanel.SetActive(false);
     }
 
-
-    private void InstanciarEnemigoDesdeSO()
+    private void InstanciarEnemigo()
     {
         enemigoInstanciado = Instantiate(
             dataCarrier.stats.battlePrefab,
@@ -120,15 +120,15 @@ public class CombatController : MonoBehaviour
         enemigoHealth = enemigoInstanciado.GetComponent<HealthComponent>();
 
         enemigo.stats = dataCarrier.stats;
-
         enemigoHealth.maxHealth = dataCarrier.stats.maxHealth;
         enemigoHealth.currentHealth = dataCarrier.stats.maxHealth;
 
-        StatusEffects enemyStatus = enemigoHealth.GetComponent<StatusEffects>();
-        if (enemyStatus != null)
+        StatusEffects st = enemigoHealth.GetComponent<StatusEffects>();
+        if (st != null)
         {
-            enemyStatus.burnTurns = 0;
-            enemyStatus.burnDamage = 0;
+            st.burnTurns = 0;
+            st.burnDamage = 0;
+            st.paralizadoTurnos = 0;
         }
 
         enemyHealthBar.SetTarget(enemigoHealth);
@@ -147,7 +147,9 @@ public class CombatController : MonoBehaviour
         GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
         GameEvents.OnTurnChanged.Invoke(true);
 
-        SetCartasAlpha(1f);
+        cartasGroup.alpha = 1f;
+        cartasGroup.interactable = true;
+        cartasGroup.blocksRaycasts = true;
     }
 
     private IEnumerator EsperarPlayer()
@@ -171,11 +173,12 @@ public class CombatController : MonoBehaviour
 
         jugadorHealth.currentHealth = jugadorHealth.maxHealth;
 
-        StatusEffects playerStatus = jugadorHealth.GetComponent<StatusEffects>();
-        if (playerStatus != null)
+        StatusEffects st = jugadorHealth.GetComponent<StatusEffects>();
+        if (st != null)
         {
-            playerStatus.burnTurns = 0;
-            playerStatus.burnDamage = 0;
+            st.burnTurns = 0;
+            st.burnDamage = 0;
+            st.paralizadoTurnos = 0;
         }
 
         playerHealthBar.SetTarget(jugadorHealth);
@@ -259,7 +262,46 @@ public class CombatController : MonoBehaviour
         if (manoJugador.Count == 0 || index < 0 || index >= manoJugador.Count)
             return;
 
+        if (cartaPermitida != null)
+        {
+            CardData cartaElegida = manoJugador[index];
+            if (cartaElegida.cardName != cartaPermitida)
+                return;
+        }
+
         CardData carta = manoJugador[index];
+
+        StatusEffects st = jugadorHealth != null ? jugadorHealth.GetComponent<StatusEffects>() : null;
+        if (st != null && st.EstaParalizado())
+        {
+            int roll = Random.Range(0, 100);
+            bool skipeado = roll < st.paralisisTurnFailChance;
+
+            st.TickTurn();
+            if (!st.EstaParalizado())
+                playerHealthBar.SetParalizado(false);
+
+            if (skipeado)
+            {
+                if (JugadorMana >= carta.manaCost)
+                {
+                    JugadorMana -= carta.manaCost;
+                    GameEvents.OnManaChanged.Invoke(JugadorMana, maxMana);
+                }
+                deck.UsarCarta(index);
+                MostrarMano();
+
+                if (st.paralisisParticles != null)
+                {
+                    GameObject fx = Instantiate(st.paralisisParticles, jugadorHealth.transform.position, Quaternion.identity);
+                    Destroy(fx, 2f);
+                }
+
+                MostrarMensaje("¡Paralizado!");
+                StartCoroutine(FinDeAccionJugador());
+                return;
+            }
+        }
 
         if (JugadorMana < carta.manaCost)
         {
@@ -274,10 +316,21 @@ public class CombatController : MonoBehaviour
         visual.cartaLogic.EjecutarCarta(this, true);
 
         deck.UsarCarta(index);
-
         MostrarMano();
 
+        if (tutorialManager != null)
+            tutorialManager.OnCartaUsada(carta);
+
+        StartCoroutine(FinDeAccionJugador());
+    }
+
+    private IEnumerator FinDeAccionJugador()
+    {
         esperandoSeleccion = false;
+
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);
+
         ComprobarEstado();
     }
 
@@ -301,46 +354,74 @@ public class CombatController : MonoBehaviour
     private void TurnoEnemigo()
     {
         GameEvents.OnTurnChanged.Invoke(false);
-        SetCartasAlpha(0f);
+
+        cartasGroup.interactable = false;
+        cartasGroup.blocksRaycasts = false;
+
         StartCoroutine(TurnoEnemigoCoroutine());
     }
 
     private IEnumerator TurnoEnemigoCoroutine()
     {
-        StatusEffects enemyStatus = enemigoHealth.GetComponent<StatusEffects>();
-        if (enemyStatus != null && enemyStatus.HasBurn())
+        StatusEffects st = enemigoHealth.GetComponent<StatusEffects>();
+
+        if (st != null && st.HasBurn())
         {
-            int burn = enemyStatus.TickBurn();
+            int burn = st.TickBurn();
             if (burn > 0)
             {
                 enemigoHealth.TakeDamage(burn);
                 MostrarDaño(burn, enemyBurnPoint, false, true);
+                SpawnBurnParticles(enemyBurnPoint);
                 GameEvents.OnLifeChanged.Invoke(enemigoHealth);
-
-                if (burnTickParticlesPrefab != null)
-                {
-                    GameObject fx = Instantiate(burnTickParticlesPrefab, enemyBurnPoint.position, Quaternion.identity);
-                    Destroy(fx, 3f);
-                }
             }
         }
 
         yield return new WaitForSeconds(1f);
 
-        var manoEnemigo = enemyDeck.ObtenerMano();
-
-        if (manoEnemigo == null || manoEnemigo.Count == 0)
+        if (st != null && st.EstaParalizado())
         {
-            TurnoJugador();
+            int roll = Random.Range(0, 100);
+
+            if (roll < st.paralisisTurnFailChance)
+            {
+                if (st.paralisisParticles != null)
+                {
+                    GameObject fx = Instantiate(st.paralisisParticles, enemigoHealth.transform.position, Quaternion.identity);
+                    Destroy(fx, 2f);
+                }
+
+                st.TickTurn();
+
+                if (!st.EstaParalizado())
+                    enemyHealthBar.SetParalizado(false);
+
+                yield return new WaitForSeconds(0.6f);
+                StartCoroutine(TurnoJugadorCoroutine());
+                yield break;
+            }
+            else
+            {
+                st.TickTurn();
+
+                if (!st.EstaParalizado())
+                    enemyHealthBar.SetParalizado(false);
+            }
+        }
+
+        var mano = enemyDeck.ObtenerMano();
+        if (mano == null || mano.Count == 0)
+        {
+            StartCoroutine(TurnoJugadorCoroutine());
             yield break;
         }
 
-        int index = Random.Range(0, manoEnemigo.Count);
-        CardData carta = manoEnemigo[index];
+        int index = Random.Range(0, mano.Count);
+        CardData carta = mano[index];
 
         if (EnemyMana < carta.manaCost)
         {
-            TurnoJugador();
+            StartCoroutine(TurnoJugadorCoroutine());
             yield break;
         }
 
@@ -358,35 +439,66 @@ public class CombatController : MonoBehaviour
 
         ReducirTurnosDefensa();
 
-        TurnoJugador();
+        if (tutorialManager != null)
+            tutorialManager.OnEnemigoAtaco();
+
+        // Solo continuar al turno jugador si el tutorial no está mostrando imagen
+        if (tutorialManager == null || !tutorialManager.tutorialActivo || tutorialManager.paso != 2)
+            StartCoroutine(TurnoJugadorCoroutine());
     }
 
     private void TurnoJugador()
     {
-        StatusEffects playerStatus = jugadorHealth.GetComponent<StatusEffects>();
-        if (playerStatus != null && playerStatus.HasBurn())
+        StartCoroutine(TurnoJugadorCoroutine());
+    }
+
+    private IEnumerator TurnoJugadorCoroutine()
+    {
+        StatusEffects st = jugadorHealth.GetComponent<StatusEffects>();
+
+        if (st != null && st.HasBurn())
         {
-            int burn = playerStatus.TickBurn();
+            int burn = st.TickBurn();
             if (burn > 0)
             {
                 jugadorHealth.TakeDamage(burn);
                 MostrarDaño(burn, playerBurnPoint, false, true);
+                SpawnBurnParticles(playerBurnPoint);
                 GameEvents.OnLifeChanged.Invoke(jugadorHealth);
-
-                if (burnTickParticlesPrefab != null)
-                {
-                    GameObject fx = Instantiate(burnTickParticlesPrefab, playerBurnPoint.position, Quaternion.identity);
-                    Destroy(fx, 3f);
-                }
             }
         }
 
         GameEvents.OnTurnChanged.Invoke(true);
+        MostrarCartaActual();
+        SetCartasAlpha(1f);
 
         esperandoSeleccion = true;
-        MostrarCartaActual();
+        cartasGroup.interactable = true;
+        cartasGroup.blocksRaycasts = true;
 
-        SetCartasAlpha(1f);
+        float tiempoTurno = 10f;
+        while (tiempoTurno > 0f && esperandoSeleccion)
+        {
+            if (tutorialManager != null && tutorialManager.tutorialActivo)
+                tiempoTurno = 10f;
+
+            tiempoTurno -= Time.deltaTime;
+            yield return null;
+        }
+
+        if (esperandoSeleccion)
+        {
+            esperandoSeleccion = false;
+            StartCoroutine(TurnoEnemigoCoroutine());
+        }
+    }
+
+    private void SpawnBurnParticles(Transform punto)
+    {
+        if (burnTickParticlesPrefab == null || punto == null) return;
+
+        GameObject fx = Instantiate(burnTickParticlesPrefab, punto.position, Quaternion.identity);
+        Destroy(fx, 3f);
     }
 
     private void EnemigoMuerto()
@@ -395,8 +507,8 @@ public class CombatController : MonoBehaviour
         if (victoryPanel != null) victoryPanel.SetActive(true);
         if (victoryText != null) victoryText.gameObject.SetActive(true);
 
-        int expGanada = enemigo.ExpReward;
-        PlayerExperience.Instance.AddExperience(expGanada);
+        int exp = enemigo.ExpReward;
+        PlayerExperience.Instance.AddExperience(exp);
 
         if (victoryExpBar != null)
         {
@@ -487,10 +599,9 @@ public class CombatController : MonoBehaviour
     {
         if (objetivo == null) return;
 
-        GameObject prefabAUsar = esQuemadura ? burnPopupPrefab : damagePopupPrefab;
+        GameObject prefab = esQuemadura ? burnPopupPrefab : damagePopupPrefab;
 
-        GameObject popup = Instantiate(prefabAUsar, canvas.transform);
-
+        GameObject popup = Instantiate(prefab, canvas.transform);
         popup.transform.position = objetivo.position;
 
         popup.GetComponent<DamagePopup>().Setup(cantidad, esCuracion, esQuemadura);
@@ -528,5 +639,23 @@ public class CombatController : MonoBehaviour
             }
         }
     }
-}
 
+    public void BloquearCartas()
+    {
+        esperandoSeleccion = false;
+        cartasGroup.interactable = false;
+        cartasGroup.blocksRaycasts = false;
+    }
+
+    public void DesbloquearCartas()
+    {
+        esperandoSeleccion = true;
+        cartasGroup.interactable = true;
+        cartasGroup.blocksRaycasts = true;
+    }
+
+    public void SetCartaPermitida(string nombreCarta)
+    {
+        cartaPermitida = nombreCarta;
+    }
+}

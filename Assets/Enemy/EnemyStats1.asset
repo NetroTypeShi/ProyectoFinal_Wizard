@@ -18,10 +18,10 @@ MonoBehaviour:
   enemySprite: {fileID: 5084661014962647745, guid: 2f90eb840bd0cf4438d49759bc08d718, type: 3}
   tipoEnemigo: 0
   mazoBase:
+  - {fileID: 11400000, guid: 515a9dbdfe74113468a9d70b4fcacf5e, type: 2}
+  - {fileID: 11400000, guid: b71f3bf17b163e8458da97cb9560efb4, type: 2}
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
   - {fileID: 11400000, guid: 4f55c310996d7cc45a337aab015cd5f7, type: 2}
   - {fileID: 11400000, guid: 6693c47efe46a594b83edcda1914293c, type: 2}
-  - {fileID: 11400000, guid: b71f3bf17b163e8458da97cb9560efb4, type: 2}
-  - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
   expReward: 100000
   battlePrefab: {fileID: 1800938087721747053, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}

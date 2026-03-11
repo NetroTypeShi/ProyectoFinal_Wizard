@@ -8,10 +8,10 @@ public class CartaAtaque : MonoBehaviour
     {
         int roll = Random.Range(0, 100);
 
+        // Probabilidad de fallar la carta
         if (roll < data.failChance)
         {
-            if (combate != null)
-                combate.MostrarMensaje("¡Fallo!");
+            combate.MostrarMensaje("¡Fallo!");
             return;
         }
 
@@ -31,31 +31,33 @@ public class CartaAtaque : MonoBehaviour
         }
     }
 
+    // ---------------------------
+    //        DAÑO
+    // ---------------------------
+
     void EjecutarDaño(CombatController combate, bool esJugador)
     {
         if (esJugador)
         {
-            // ⭐ Daño del jugador al enemigo
             float mult = TypeChart.GetMultiplier(data.tipo, combate.enemigo.tipoEnemigo);
-            int dañoFinal = Mathf.RoundToInt(data.damage * mult);
+            int dmg = Mathf.RoundToInt(data.damage * mult);
 
-            combate.enemigoHealth.TakeDamage(dañoFinal);
+            combate.enemigoHealth.TakeDamage(dmg);
             GameEvents.OnLifeChanged.Invoke(combate.enemigoHealth);
 
             if (combate.enemigoHealth.currentHealth > 0)
-                combate.MostrarDaño(dañoFinal, combate.enemyDamagePoint, false);
+                combate.MostrarDaño(dmg, combate.enemyDamagePoint, false);
 
-            // ⭐ Aplicar quemadura SOLO al enemigo
+            StatusEffects status = combate.enemigoHealth.GetComponent<StatusEffects>();
+
             if (data.aplicaQuemadura)
-            {
-                StatusEffects status = combate.enemigoHealth.GetComponent<StatusEffects>();
-                if (status != null)
-                    status.ApplyBurn(data.quemaduraDaño, data.quemaduraTurnos);
-            }
+                status.ApplyBurn(data.quemaduraDaño, data.quemaduraTurnos);
+
+            if (data.aplicaParalisis)
+                AplicarParalisis(status, combate, false);
         }
         else
         {
-            // ⭐ Daño del enemigo al jugador
             float mult = TypeChart.GetMultiplier(data.tipo, combate.tipoJugador);
             int dmg = Mathf.RoundToInt(data.damage * mult);
 
@@ -68,15 +70,50 @@ public class CartaAtaque : MonoBehaviour
             if (combate.jugadorHealth.currentHealth > 0)
                 combate.MostrarDaño(dmg, combate.playerDamagePoint, false);
 
-            // ⭐ Aplicar quemadura SOLO al jugador
+            StatusEffects status = combate.jugadorHealth.GetComponent<StatusEffects>();
+
             if (data.aplicaQuemadura)
-            {
-                StatusEffects status = combate.jugadorHealth.GetComponent<StatusEffects>();
-                if (status != null)
-                    status.ApplyBurn(data.quemaduraDaño, data.quemaduraTurnos);
-            }
+                status.ApplyBurn(data.quemaduraDaño, data.quemaduraTurnos);
+
+            if (data.aplicaParalisis)
+                AplicarParalisis(status, combate, true);
         }
     }
+
+    // ---------------------------
+    //        PARÁLISIS
+    // ---------------------------
+
+    void AplicarParalisis(StatusEffects status, CombatController combate, bool esJugadorObjetivo)
+    {
+        int roll = Random.Range(0, 100);
+
+        // Probabilidad de aplicar parálisis
+        if (roll < data.paralisisApplyChance)
+        {
+            status.ApplyParalysis(data.paralisisTurnos, data.paralisisParticles);
+
+            // Cambiar material de la barra
+            if (esJugadorObjetivo)
+            {
+                if (combate.playerHealthBar != null)
+                    combate.playerHealthBar.SetParalizado(true);
+            }
+            else
+            {
+                if (combate.enemyHealthBar != null)
+                    combate.enemyHealthBar.SetParalizado(true);
+            }
+        }
+        else
+        {
+            combate.MostrarMensaje("La parálisis falló");
+        }
+    }
+
+    // ---------------------------
+    //        DEFENSA
+    // ---------------------------
 
     void EjecutarDefensa(CombatController combate, bool esJugador)
     {
@@ -90,6 +127,10 @@ public class CartaAtaque : MonoBehaviour
 
         combate.MostrarEscudo(objetivo);
     }
+
+    // ---------------------------
+    //        CURACIÓN
+    // ---------------------------
 
     void EjecutarCuracion(CombatController combate, bool esJugador)
     {
@@ -115,19 +156,16 @@ public class CartaAtaque : MonoBehaviour
             combate.MostrarDaño(data.healAmount, combate.enemyDamagePoint, true);
         }
 
-        // ⭐ Partículas de curación
         if (combate.healParticlesPrefab != null)
         {
-            GameObject fx = GameObject.Instantiate(
-                combate.healParticlesPrefab,
-                objetivo.position,
-                Quaternion.identity
-            );
-
-            GameObject.Destroy(fx, 3f);
+            GameObject fx = Instantiate(combate.healParticlesPrefab, objetivo.position, Quaternion.identity);
+            Destroy(fx, 3f);
         }
     }
 }
+
+
+
 
 
 

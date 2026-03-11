@@ -11,6 +11,10 @@ public class HealthBarUI : MonoBehaviour
     [Header("Texto de vida")]
     public TextMeshProUGUI lifeText;
 
+    [Header("Materiales de estado")]
+    public Material normalMaterial;
+    public Material paralizadoMaterial;
+
     private HealthComponent targetHealth;
     private RectTransform rectTransform;
     private Vector3 originalPosition;
@@ -19,6 +23,10 @@ public class HealthBarUI : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         originalPosition = rectTransform.anchoredPosition;
+
+        // Asegurar que arranca con el material normal
+        if (fillImage != null && normalMaterial != null)
+            fillImage.material = normalMaterial;
     }
 
     private void OnEnable()
@@ -51,9 +59,21 @@ public class HealthBarUI : MonoBehaviour
         if (lifeText != null)
             lifeText.text = $"{healthComp.currentHealth} / {healthComp.maxHealth}";
     }
+
+    // ⭐ Cambiar material cuando está paralizado
+    public void SetParalizado(bool estado)
+    {
+        if (fillImage == null) return;
+
+        if (estado)
+        {
+            if (paralizadoMaterial != null)
+                fillImage.material = paralizadoMaterial;
+        }
+        else
+        {
+            if (normalMaterial != null)
+                fillImage.material = normalMaterial;
+        }
+    }
 }
-
-
-
-
-

@@ -1,23 +1,27 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class DeckBuilderUI : MonoBehaviour
 {
     public PlayerCardCollection cardCollection;
 
-    [Header("Paneles donde se instancian las cartas")]
     public RectTransform inventoryPanel;
     public RectTransform deckPanel;
 
-    [Header("Prefab de carta (EL MISMO QUE EN COMBATE)")]
     public GameObject cartaVisualPrefab;
 
-    [Header("Límites")]
     public int maxDeckSize = 5;
-
-    [Header("Panel principal del deckbuilder")]
     public GameObject deckBuilderPanel;
 
     private DeckManager deckManager;
+
+    private List<DeckBuilderCardButton> inventoryButtons = new List<DeckBuilderCardButton>();
+    private List<DeckBuilderCardButton> deckButtons = new List<DeckBuilderCardButton>();
+
+    private int selectedInventoryIndex = 0;
+    private int selectedDeckIndex = 0;
+
+    private bool inInventory = true;
 
     private void Start()
     {
@@ -32,27 +36,126 @@ public class DeckBuilderUI : MonoBehaviour
         RefreshUI();
     }
 
+    // ✅ FIX: Registrar listener y refrescar cada vez que el panel se activa
+    private void OnEnable()
+    {
+        // Evitar doble-registro si Start ya añadió el listener
+        GameEvents.OnCardUnlocked.RemoveListener(OnCardUnlocked);
+        GameEvents.OnCardUnlocked.AddListener(OnCardUnlocked);
+
+        // Si deckManager ya está listo (Start ya corrió), refrescar
+        if (deckManager != null)
+            RefreshUI();
+    }
+
+    // ✅ FIX: Desregistrar listener cuando el panel se desactiva
+    private void OnDisable()
+    {
+        GameEvents.OnCardUnlocked.RemoveListener(OnCardUnlocked);
+    }
+
+    private void OnCardUnlocked(CardData card)
+    {
+        // ✅ Solo refrescar si el panel está visible
+        if (gameObject.activeInHierarchy)
+            RefreshUI();
+    }
+
+    private void Update()
+    {
+        // ❗ FIX: No bloquear Update si no hay cartas
+        if (inInventory && inventoryButtons.Count == 0)
+            return;
+
+        if (!inInventory && deckButtons.Count == 0)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+            SwitchPanel();
+
+        if (Input.GetKeyDown(KeyCode.RightArrow)) MoveSelection(1);
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveSelection(-1);
+        if (Input.GetKeyDown(KeyCode.DownArrow)) MoveSelection(4);
+        if (Input.GetKeyDown(KeyCode.UpArrow)) MoveSelection(-4);
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            if (inInventory)
+                inventoryButtons[selectedInventoryIndex].OnClick();
+            else
+                deckButtons[selectedDeckIndex].OnClick();
+        }
+    }
+
+    private void SwitchPanel()
+    {
+        if (inInventory)
+        {
+            if (inventoryButtons.Count > 0)
+                inventoryButtons[selectedInventoryIndex].Deselect();
+
+            inInventory = false;
+
+            if (deckButtons.Count > 0)
+                deckButtons[selectedDeckIndex].Select();
+        }
+        else
+        {
+            if (deckButtons.Count > 0)
+                deckButtons[selectedDeckIndex].Deselect();
+
+            inInventory = true;
+
+            if (inventoryButtons.Count > 0)
+                inventoryButtons[selectedInventoryIndex].Select();
+        }
+    }
+
+    private void MoveSelection(int amount)
+    {
+        if (inInventory)
+        {
+            inventoryButtons[selectedInventoryIndex].Deselect();
+
+            selectedInventoryIndex += amount;
+            selectedInventoryIndex = Mathf.Clamp(selectedInventoryIndex, 0, inventoryButtons.Count - 1);
+
+            inventoryButtons[selectedInventoryIndex].Select();
+        }
+        else
+        {
+            deckButtons[selectedDeckIndex].Deselect();
+
+            selectedDeckIndex += amount;
+            selectedDeckIndex = Mathf.Clamp(selectedDeckIndex, 0, deckButtons.Count - 1);
+
+            deckButtons[selectedDeckIndex].Select();
+        }
+    }
+
     public void RefreshUI()
     {
-        // Limpiar paneles
+        inventoryButtons.Clear();
+        deckButtons.Clear();
+        selectedInventoryIndex = 0;
+        selectedDeckIndex = 0;
+        inInventory = true;
+
         foreach (Transform t in inventoryPanel)
             Destroy(t.gameObject);
 
         foreach (Transform t in deckPanel)
             Destroy(t.gameObject);
 
-        // ⭐ 1. CARTAS BASE DEL JUGADOR
         foreach (var card in cardCollection.unlockedCards)
             CrearCartaEnInventario(card);
 
-        // ⭐ 2. CARTAS DESBLOQUEADAS EN EL MUNDO
         foreach (var card in deckManager.cartasDesbloqueadas)
         {
             if (!cardCollection.unlockedCards.Contains(card))
                 CrearCartaEnInventario(card);
         }
 
-        // ⭐ 3. MAZO EDITABLE
         foreach (var card in deckManager.mazoEditable)
         {
             GameObject go = Instantiate(cartaVisualPrefab, deckPanel);
@@ -62,8 +165,17 @@ public class DeckBuilderUI : MonoBehaviour
             visual.isFaceDown = false;
             visual.Configurar(card);
 
-            go.AddComponent<DeckBuilderCardButton>().Init(card, this, false);
+            var btn = go.AddComponent<DeckBuilderCardButton>();
+            btn.Init(card, this, false);
+
+            deckButtons.Add(btn);
         }
+
+        // ❗ FIX: Evitar que Update se bloquee si no hay cartas
+        if (inventoryButtons.Count > 0)
+            inventoryButtons[0].Select();
+        else
+            inInventory = false;
     }
 
     private void CrearCartaEnInventario(CardData card)
@@ -75,7 +187,10 @@ public class DeckBuilderUI : MonoBehaviour
         visual.isFaceDown = false;
         visual.Configurar(card);
 
-        go.AddComponent<DeckBuilderCardButton>().Init(card, this, true);
+        var btn = go.AddComponent<DeckBuilderCardButton>();
+        btn.Init(card, this, true);
+
+        inventoryButtons.Add(btn);
     }
 
     private void AjustarRectTransform(GameObject go)
@@ -111,7 +226,6 @@ public class DeckBuilderUI : MonoBehaviour
         Time.timeScale = 1f;
     }
 }
-
 
 
 

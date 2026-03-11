@@ -7,16 +7,17 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movimiento")]
     public float walkSpeed = 5f;
     public float runSpeed = 7f;
-    public float jumpForce = 16f;         
-    public float lowJumpGravity = 30f;    
-    public float fallGravity = 50f;       
+    public float jumpForce = 16f;
+    public float lowJumpGravity = 30f;
+    public float fallGravity = 50f;
     private Rigidbody rb;
     private Vector3 movement;
 
+    [HideInInspector] public bool bloqueado = false;
+
     [Header("Sprites")]
     public SpriteRenderer spriteRenderer;
-
-    public Sprite[] upSprites;   
+    public Sprite[] upSprites;
     public Sprite[] downSprites;
     public Sprite[] rightSprites;
 
@@ -24,25 +25,20 @@ public class PlayerMovement : MonoBehaviour
     public float walkAnimationInterval = 0.2f;
     public float runAnimationInterval = 0.1f;
     private int animationFrame = 0;
-    private int lastDirection = 0; 
+    private int lastDirection = 0;
 
-    
     private bool isGrounded = false;
     private int jumpCount = 0;
     public int maxJumps = 2;
     private bool jumpRequested = false;
 
-
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
 
-        // ⭐ NO mover al jugador si venimos de un combate
         if (PlayerPositionMemory.hasSavedPosition)
             return;
 
-        // Respawn normal por checkpoint
         if (CheckpointManager.instance != null &&
             CheckpointManager.instance.shouldRespawn &&
             CheckpointManager.instance.currentCheckpoint != null)
@@ -52,10 +48,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
-
     void Update()
     {
+        if (bloqueado)
+        {
+            movement = Vector3.zero;
+            return;
+        }
+
         float x = 0f;
         float z = 0f;
 
@@ -70,23 +70,15 @@ public class PlayerMovement : MonoBehaviour
 
         movement = new Vector3(x, 0f, z).normalized * speed;
 
-        // Solicitar salto 
         if (Keyboard.current.spaceKey.wasPressedThisFrame && jumpCount < maxJumps)
-        {
             jumpRequested = true;
-        }
 
-        // Animación 
         if (movement.magnitude > 0.01f)
         {
             if (Mathf.Abs(x) > Mathf.Abs(z))
-            {
                 lastDirection = x > 0 ? 2 : 3;
-            }
             else if (Mathf.Abs(z) > 0)
-            {
                 lastDirection = z > 0 ? 1 : 0;
-            }
 
             animationTimer += Time.deltaTime;
             if (animationTimer >= animationInterval)
@@ -120,19 +112,21 @@ public class PlayerMovement : MonoBehaviour
                 spriteRenderer.flipX = true;
                 break;
         }
-        
-
     }
 
     void FixedUpdate()
     {
-        // Movimiento horizontal 
+        if (bloqueado)
+        {
+            rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            return;
+        }
+
         Vector3 velocity = rb.linearVelocity;
         velocity.x = movement.x;
         velocity.z = movement.z;
         rb.linearVelocity = velocity;
 
-        // Salto y doble salto (solo AddForce, no tocar velocity.y)
         if (jumpRequested && jumpCount < maxJumps)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -144,22 +138,14 @@ public class PlayerMovement : MonoBehaviour
             jumpRequested = false;
         }
 
-        // Gravedad personalizada
         if (rb.linearVelocity.y > 0.1f)
-        {
             rb.AddForce(Vector3.down * lowJumpGravity, ForceMode.Acceleration);
-        }
         else if (rb.linearVelocity.y < -0.1f)
-        {
             rb.AddForce(Vector3.down * fallGravity, ForceMode.Acceleration);
-        }
     }
-
-
 
     void OnCollisionEnter(Collision collision)
     {
-        
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
@@ -170,9 +156,7 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
-        {
             isGrounded = false;
-        }
     }
 }
 
