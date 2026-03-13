@@ -14,5 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCardCollection
   unlockedCards:
   - {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
-  - {fileID: 11400000, guid: 4f55c310996d7cc45a337aab015cd5f7, type: 2}
   - {fileID: 11400000, guid: 6693c47efe46a594b83edcda1914293c, type: 2}

@@ -36,19 +36,18 @@ public class DeckBuilderUI : MonoBehaviour
         RefreshUI();
     }
 
-    // ✅ FIX: Registrar listener y refrescar cada vez que el panel se activa
     private void OnEnable()
     {
-        // Evitar doble-registro si Start ya añadió el listener
         GameEvents.OnCardUnlocked.RemoveListener(OnCardUnlocked);
         GameEvents.OnCardUnlocked.AddListener(OnCardUnlocked);
 
-        // Si deckManager ya está listo (Start ya corrió), refrescar
+        if (deckManager == null)
+            deckManager = DeckManager.instance;
+
         if (deckManager != null)
             RefreshUI();
     }
 
-    // ✅ FIX: Desregistrar listener cuando el panel se desactiva
     private void OnDisable()
     {
         GameEvents.OnCardUnlocked.RemoveListener(OnCardUnlocked);
@@ -56,25 +55,36 @@ public class DeckBuilderUI : MonoBehaviour
 
     private void OnCardUnlocked(CardData card)
     {
-        // ✅ Solo refrescar si el panel está visible
         if (gameObject.activeInHierarchy)
             RefreshUI();
     }
 
     private void Update()
     {
-        // ❗ FIX: No bloquear Update si no hay cartas
+        // ABRIR / CERRAR CON TAB
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (deckBuilderPanel.activeSelf)
+                CerrarDeckbuilder();
+            else
+                AbrirDeckbuilder();
+
+            return; 
+        }
+
+        
+        if (!deckBuilderPanel.activeSelf)
+            return;
+
+        // --- Navegación  ---
         if (inInventory && inventoryButtons.Count == 0)
             return;
 
         if (!inInventory && deckButtons.Count == 0)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Tab))
-            SwitchPanel();
-
-        if (Input.GetKeyDown(KeyCode.RightArrow)) MoveSelection(1);
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveSelection(-1);
+        if (Input.GetKeyDown(KeyCode.D)) MoveSelection(1);
+        if (Input.GetKeyDown(KeyCode.A)) MoveSelection(-1);
         if (Input.GetKeyDown(KeyCode.DownArrow)) MoveSelection(4);
         if (Input.GetKeyDown(KeyCode.UpArrow)) MoveSelection(-4);
 
@@ -117,21 +127,40 @@ public class DeckBuilderUI : MonoBehaviour
         {
             inventoryButtons[selectedInventoryIndex].Deselect();
 
-            selectedInventoryIndex += amount;
-            selectedInventoryIndex = Mathf.Clamp(selectedInventoryIndex, 0, inventoryButtons.Count - 1);
+            int nuevoIndex = selectedInventoryIndex + amount;
 
+            // Si está en la última carta y pulsa derecha, cambia al mazo
+            if (amount == 1 && selectedInventoryIndex == inventoryButtons.Count - 1 && deckButtons.Count > 0)
+            {
+                inInventory = false;
+                deckButtons[selectedDeckIndex].Select();
+                return;
+            }
+
+            // Movimiento normal dentro del inventario
+            selectedInventoryIndex = Mathf.Clamp(nuevoIndex, 0, inventoryButtons.Count - 1);
             inventoryButtons[selectedInventoryIndex].Select();
         }
         else
         {
             deckButtons[selectedDeckIndex].Deselect();
 
-            selectedDeckIndex += amount;
-            selectedDeckIndex = Mathf.Clamp(selectedDeckIndex, 0, deckButtons.Count - 1);
+            int nuevoIndex = selectedDeckIndex + amount;
 
+            // Si está en la primera carta y pulsa izquierda, vuelve al inventario
+            if (amount == -1 && selectedDeckIndex == 0 && inventoryButtons.Count > 0)
+            {
+                inInventory = true;
+                inventoryButtons[selectedInventoryIndex].Select();
+                return;
+            }
+
+            // Movimiento normal dentro del mazo
+            selectedDeckIndex = Mathf.Clamp(nuevoIndex, 0, deckButtons.Count - 1);
             deckButtons[selectedDeckIndex].Select();
         }
     }
+
 
     public void RefreshUI()
     {
@@ -171,7 +200,6 @@ public class DeckBuilderUI : MonoBehaviour
             deckButtons.Add(btn);
         }
 
-        // ❗ FIX: Evitar que Update se bloquee si no hay cartas
         if (inventoryButtons.Count > 0)
             inventoryButtons[0].Select();
         else
@@ -221,11 +249,22 @@ public class DeckBuilderUI : MonoBehaviour
     }
 
     public void CerrarDeckbuilder()
-    {
-        deckBuilderPanel.SetActive(false);
-        Time.timeScale = 1f;
-    }
+{
+    deckBuilderPanel.SetActive(false);
+    Time.timeScale = 1f;
 }
+
+
+    public void AbrirDeckbuilder()
+    {
+        deckBuilderPanel.SetActive(true);
+        Time.timeScale = 0f; // Pausa el juego
+        RefreshUI();
+    }
+
+
+}
+
 
 
 

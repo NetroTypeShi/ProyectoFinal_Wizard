@@ -37,6 +37,7 @@ public class DialogoNPC : MonoBehaviour
     private bool esperandoRespuesta = false;
     private Transform jugador;
     private PlayerMovement playerMovement;
+    private int opcionSeleccionada = 0;
 
     private void Start()
     {
@@ -51,6 +52,8 @@ public class DialogoNPC : MonoBehaviour
         botonNo.onClick.AddListener(RespuestaNo);
     }
 
+    
+
     private void Update()
     {
         float distancia = Vector3.Distance(transform.position, jugador.position);
@@ -61,8 +64,34 @@ public class DialogoNPC : MonoBehaviour
 
         if (jugadorCerca && !dialogoActivo && Input.GetKeyDown(teclaInteraccion))
             StartCoroutine(ReproducirDialogo());
+
+        // Manejo de selección con teclado cuando el panel de respuesta está activo
+        if (panelRespuesta.activeSelf && esperandoRespuesta)
+        {
+            // Cambiar selección con flechas
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.W))
+            {
+                opcionSeleccionada = 0;
+                botonSi.Select();
+            }
+            else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S))
+            {
+                opcionSeleccionada = 1;
+                botonNo.Select();
+            }
+
+            // Confirmar selección con Enter
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                if (opcionSeleccionada == 0)
+                    RespuestaSi();
+                else
+                    RespuestaNo();
+            }
+        }
     }
 
+    // Al mostrar el panel de respuesta, selecciona por defecto el botón "Sí"
     private IEnumerator ReproducirDialogo()
     {
         dialogoActivo = true;
@@ -72,20 +101,19 @@ public class DialogoNPC : MonoBehaviour
 
         for (int i = 0; i < frases.Length; i++)
         {
-            // Esperar a que Space esté completamente suelto antes de cada frase
             yield return new WaitUntil(() => !Input.GetKey(KeyCode.Space));
-
             yield return StartCoroutine(EscribirTexto(frases[i]));
 
             if (i == frases.Length - 1)
             {
                 esperandoRespuesta = true;
                 panelRespuesta.SetActive(true);
+                opcionSeleccionada = 0;
+                botonSi.Select(); // Selecciona "Sí" por defecto
                 yield return new WaitUntil(() => !esperandoRespuesta);
             }
             else
             {
-                // Esperar que suelten Space y luego lo vuelvan a pulsar
                 yield return new WaitUntil(() => !Input.GetKey(KeyCode.Space));
                 yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
             }
@@ -95,6 +123,7 @@ public class DialogoNPC : MonoBehaviour
         if (playerMovement != null) playerMovement.bloqueado = false;
         dialogoActivo = false;
     }
+
 
     private IEnumerator EscribirTexto(string frase)
     {
