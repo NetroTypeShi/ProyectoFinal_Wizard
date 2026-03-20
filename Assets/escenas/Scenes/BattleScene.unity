@@ -2718,7 +2718,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: JugadorMana
-      value: 100
+      value: 31354
       objectReference: {fileID: 0}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: cartasGroup

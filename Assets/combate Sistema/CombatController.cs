@@ -21,7 +21,7 @@ public class CombatController : MonoBehaviour
     public HealthComponent jugadorHealth;
     public HealthComponent enemigoHealth;
     public Enemy enemigo;
-    public int JugadorMana = 5;
+    public int JugadorMana = 9000;
     public int EnemyMana = 5;
     private int maxMana;
 

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Runtime.InteropServices;
+using UnityEngine;
 
 public class CartaAtaque : MonoBehaviour
 {
@@ -6,7 +8,7 @@ public class CartaAtaque : MonoBehaviour
 
     public void EjecutarCarta(CombatController combate, bool esJugador)
     {
-        int roll = Random.Range(0, 100);
+        int roll = UnityEngine.Random.Range(0, 100);
 
         // Probabilidad de fallar la carta
         if (roll < data.failChance)
@@ -37,11 +39,14 @@ public class CartaAtaque : MonoBehaviour
 
     void EjecutarDaño(CombatController combate, bool esJugador)
     {
+        // pone el daño variable
+        int damageDealt = CalcularDañoVariable(data.damage, data.damageVariabilityPercent);
+        print(damageDealt);
         if (esJugador)
         {
             float mult = TypeChart.GetMultiplier(data.tipo, combate.enemigo.tipoEnemigo);
-            int dmg = Mathf.RoundToInt(data.damage * mult);
-
+            int dmg = Mathf.RoundToInt(damageDealt * mult);
+            print(dmg);
             combate.enemigoHealth.TakeDamage(dmg);
             GameEvents.OnLifeChanged.Invoke(combate.enemigoHealth);
 
@@ -59,7 +64,7 @@ public class CartaAtaque : MonoBehaviour
         else
         {
             float mult = TypeChart.GetMultiplier(data.tipo, combate.tipoJugador);
-            int dmg = Mathf.RoundToInt(data.damage * mult);
+            int dmg = Mathf.RoundToInt(damageDealt * mult);
 
             if (combate.defensaActiva)
                 dmg = Mathf.RoundToInt(dmg * (1f - combate.defensaPorcentaje));
@@ -79,6 +84,21 @@ public class CartaAtaque : MonoBehaviour
                 AplicarParalisis(status, combate, true);
         }
     }
+    // ---------------------------
+    //        DAÑO ALEATORIO
+    // ---------------------------
+
+    int CalcularDañoVariable(int baseDamage, float variabilityPercent)
+    {
+        // porcentaje mx y min
+        variabilityPercent = Mathf.Clamp01(variabilityPercent / 100f);
+
+        // max dmage
+        int maxDamage = Mathf.RoundToInt(baseDamage * variabilityPercent);
+
+        // Devolve un valor entre 0 al mazimo
+        return UnityEngine.Random.Range(0, maxDamage + 1);
+    }
 
     // ---------------------------
     //        PARÁLISIS
@@ -86,7 +106,7 @@ public class CartaAtaque : MonoBehaviour
 
     void AplicarParalisis(StatusEffects status, CombatController combate, bool esJugadorObjetivo)
     {
-        int roll = Random.Range(0, 100);
+        int roll = UnityEngine.Random.Range(0, 100);
 
         // Probabilidad de aplicar parálisis
         if (roll < data.paralisisApplyChance)

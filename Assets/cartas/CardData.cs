@@ -18,6 +18,11 @@ public class CardData : ScriptableObject
     [Header("Daño")]
     public int damage;
 
+    //[Me lo pongo de anotación]Cuando usas una carta de daño hay probabilidad de que no haya daño, se cambia a un porcentaje y cada que se use hace un numero al azar entre [ese porcentaje respecto del daño base] arriba a abajo
+    [Tooltip("Porcentaje de variabilidad del daño (100% = 0 a daño base, 50% = 0 a 50% del daño base)")]
+    [Range(0, 200)]
+    public float damageVariabilityPercent = 200f;
+
     [Header("Curación")]
     public int healAmount;
 
@@ -34,7 +39,7 @@ public class CardData : ScriptableObject
     [Header("Tipo elemental")]
     public ElementType tipo;
 
-    [Header("Probabilidad de fallo de la carta")]
+    [Header("Porcentaje de fallo de la carta")]
     [Range(0, 100)]
     public int failChance = 0;
 
@@ -56,8 +61,3 @@ public class CardData : ScriptableObject
     [Header("Partículas de parálisis")]
     public GameObject paralisisParticles;
 }
-
-
-
-
-
